@@ -1,0 +1,11 @@
+-- Establishes the extension baseline and proves the migration pipeline.
+--
+-- pgcrypto is already present on a default Supabase project, so on this project
+-- this migration is a no-op. Its value is that it makes the dependency explicit
+-- and reproducible, which matters for any second project (a dev project, a
+-- restore, or a fresh environment) where it would otherwise be absent.
+--
+-- Note: Supabase deprecated pinning extension versions (2026-08-05). A VERSION
+-- clause is ignored and only warns, so it is deliberately omitted. Edit the
+-- extversion only if a future default breaks something.
+create extension if not exists pgcrypto with schema extensions;
