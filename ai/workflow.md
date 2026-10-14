@@ -11,6 +11,7 @@ This folder keeps you and the AI agent aligned. It is the single source of truth
 | `ai/workflow.md` | This file — how the project is run. Read first. |
 | `ai/overview.md` | What the project is and why. Written once in Phase 1. |
 | `ai/architecture.md` | How the system is structured, and which decisions are settled. Written once in Phase 1. |
+| `ai/design.md` | How the interface should look and feel. Read before building any UI. |
 | `ai/roadmap.md` | The features, in order, with status. Updated throughout. |
 | `ai/feature-template.md` | The skeleton used each time a feature's docs are created. |
 | `ai/features/<name>/spec.md` | What one feature does (behavior, rules, acceptance criteria). |
@@ -69,7 +70,7 @@ At the start of a session, or whenever unsure:
 1. `ai/workflow.md` (this file).
 2. `ai/roadmap.md`.
 3. If a feature is `in development`: its `ai/features/<name>/tasks.md` — resume from the first unchecked task. Otherwise propose the first `pending` feature and start its discussion.
-4. Consult `ai/architecture.md` and `ai/overview.md` for design and scope decisions; the current feature's docs when working inside it.
+4. Consult `ai/architecture.md` and `ai/overview.md` for structure and scope, and `ai/design.md` before writing any UI; the current feature's docs when working inside it.
 
 ## 6. Rules
 

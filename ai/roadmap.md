@@ -8,11 +8,15 @@ When the content is final, delete these comments. -->
 
 ## 1. Project scaffolding
 - **Status**: completed
-- **Goal**: The Next.js (App Router, TypeScript) app runs on Vercel with Supabase auth, Postgres, and private storage wired up, plus Stripe and the email provider configured.
+- **Goal**: The Next.js app runs against a hosted Supabase project: config validated at boot, browser and server clients, session refresh in the proxy, and schema changes applied through CLI migrations.
 
 ## 2. Data model
 - **Status**: completed
 - **Goal**: The Postgres schema for every core entity, with RLS policies on each table.
+
+## 2.1. Landing page
+- **Status**: pending
+- **Goal**: A public page that explains the service to parents and to caregivers and sends each to the right signup.
 
 ## 3. Household accounts
 - **Status**: pending
