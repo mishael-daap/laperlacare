@@ -11,7 +11,7 @@ When the content is final, delete these comments. -->
 - **Goal**: The Next.js (App Router, TypeScript) app runs on Vercel with Supabase auth, Postgres, and private storage wired up, plus Stripe and the email provider configured.
 
 ## 2. Data model
-- **Status**: pending
+- **Status**: completed
 - **Goal**: The Postgres schema for every core entity, with RLS policies on each table.
 
 ## 3. Household accounts
