@@ -4,10 +4,11 @@ Done well when: an agent can implement features without re-asking "how do we do 
 # Architecture
 
 ## Stack
-- Frontend: Next.js (App Router) with TypeScript
-- Backend: Next.js server routes and server actions; Supabase for auth, database, storage, and edge functions
+- Frontend: Next.js (App Router) with TypeScript, styled with Tailwind CSS and shadcn/ui
+- Backend: Next.js server routes and server actions; Supabase for database, storage, and edge functions
 - Database: Supabase Postgres, with Row Level Security
-- Other: Stripe for subscription billing; a transactional email provider for notifications; Supabase Storage for documents; deployment on Vercel
+- Auth: Supabase Auth, with cookie-based sessions refreshed in Next.js middleware
+- Other: Stripe for subscription billing; Resend for transactional email; Supabase Storage for documents; pnpm as the package manager; deployment on Vercel through the Vercel CLI
 
 ## System Structure
 <!-- The main parts of the system and each one's job. -->
@@ -25,7 +26,7 @@ Parent searches the catalog → server route confirms an active membership → v
 
 ## Core Entities
 <!-- The main things the system stores or works with. One line each. -->
-- **Household** — the paying account; one per family.
+- **Household** — the paying account and the tenancy boundary; one per family, with membership held in Postgres.
 - **Family member** — a parent or a child under the household; a child profile may hold care needs and any special-needs details the parent chooses to record.
 - **Caregiver** — the provider profile and its verification status.
 - **Caregiver document** — an uploaded licence, background check, or certification file.
@@ -46,11 +47,15 @@ Parent searches the catalog → server route confirms an active membership → v
 - Availability is stored in UTC alongside the caregiver's IANA timezone, so date and time filters are unambiguous across zones.
 - Admin entities use conventional, Salesforce-mappable shapes to keep a later migration open.
 - Special-needs capability is a set of filterable attributes on a caregiver, not a separate product surface. Special-needs families are a segment served by the same catalog, search, and billing as everyone else.
-- Auth is Supabase Auth, with a household as the tenancy boundary: users are scoped to their household by policy.
+- Auth is Supabase Auth. A household is the tenancy boundary, held in our own `households` and `household_members` tables; policies resolve membership through a `SECURITY DEFINER` helper so the membership table's own policies do not recurse.
+- RLS reads the caller through `auth.uid()`, which returns a `uuid`. Every column referencing a user is a `uuid` foreign key to `auth.users`.
+- `auth.users` is not extended in place. A `profiles` table in the public schema carries app-level user fields, populated by a trigger on user creation.
+- Caregivers sit outside any household: caregiver-owned rows are authorised by `auth.uid()` matching the row's `user_id`. Admin access is authorised by an `is_admin()` `SECURITY DEFINER` function over `profiles`.
+- Schema changes are committed migration files applied with the Supabase CLI. No table is ever created by hand in the dashboard.
 
 ## Constraints
 <!-- Must use X. Avoid Y. -->
-- Must use Supabase and Next.js. Avoid introducing a second backend service.
+- Must use Supabase and Next.js. Avoid introducing a second backend service; Stripe and Resend are the only third parties.
 - California childcare checks are fingerprint-based, run through Live Scan (DOJ/FBI) and the TrustLine registry. The platform records and reviews claimed credentials; it does not perform the checks itself.
 - Special-needs information recorded on a child profile is sensitive personal information under CCPA/CPRA, and a child under 13 puts COPPA in scope.
 - Do not present the service as therapy, clinical, or medical care.
