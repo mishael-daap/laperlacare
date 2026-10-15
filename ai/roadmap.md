@@ -18,9 +18,9 @@ When the content is final, delete these comments. -->
 - **Status**: completed
 - **Goal**: A public page that explains the service to parents and to caregivers and sends each to the right signup.
 
-## 3. Household accounts
-- **Status**: pending
-- **Goal**: One family account with member profiles, including the child.
+## 3. Accounts and sign-in
+- **Status**: completed
+- **Goal**: A parent can create an account with Google or email, sign in, and sign out, and every screen knows whether they are signed in. No profile page and no household or child management.
 
 ## 4. Caregiver onboarding
 - **Status**: pending

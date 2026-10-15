@@ -1,26 +1,45 @@
+import { Button } from "@/components/ui/button";
+import { signOutAction } from "@/lib/auth/actions";
+import { createClient } from "@/lib/supabase/server";
+
 /**
- * Section 7. One line on black.
+ * Section 7. One line on black, plus a sign-out control when signed in.
  *
- * Nothing else. No columns of links, no social icons, no newsletter box — none
- * of it exists to link to yet, and a footer that is mostly empty space with
- * placeholder links is worse than one line. When there is something real to put
- * here, it goes here.
+ * No columns of links, no social icons, no newsletter box — none of it exists
+ * to link to yet, and a footer that is mostly empty space with placeholder
+ * links is worse than one line.
  *
- * Uses foreground/background rather than literal black and white, so it stays
- * on the theme's tokens like everything else.
+ * This is the only part of the page that knows who is signed in, so it cannot
+ * be cached and it cannot be prerendered. `page.tsx` wraps it in Suspense,
+ * which is what keeps the rest of the landing page static: the shell is
+ * prerendered as before and this one strip is resolved per request.
  *
- * `"use cache"` is required, not decorative. Cache Components rejects
- * `new Date()` during prerendering because it can differ between renders, so
- * the year has to be captured once and cached rather than read at request time.
+ * That also means `new Date()` is fine here. It is only rejected during
+ * prerendering, and this never prerenders.
  */
 export async function Footer() {
-  "use cache";
-
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
   const year = new Date().getFullYear();
 
   return (
     <footer className="bg-foreground px-6 py-12 text-background sm:px-10 lg:px-16">
-      <p className="text-sm text-background/70">© {year} La Perla Care</p>
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-6">
+        <p className="text-sm text-background/70">© {year} La Perla Care</p>
+
+        {data?.claims ? (
+          <form action={signOutAction}>
+            <Button
+              type="submit"
+              variant="ghost"
+              size="sm"
+              className="text-background/70 hover:bg-transparent hover:text-background"
+            >
+              Sign out
+            </Button>
+          </form>
+        ) : null}
+      </div>
     </footer>
   );
 }

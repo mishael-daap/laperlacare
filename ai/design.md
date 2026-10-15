@@ -37,6 +37,7 @@ Every colour, radius, shadow, and font comes from `src/app/globals.css`. Nothing
 
 - **Use semantic tokens, never the raw Tailwind palette or an arbitrary value.** `bg-background`, `text-foreground`, `bg-primary`, `text-muted-foreground`, `border-border`. Not `bg-blue-500`, not `text-gray-700`, not `bg-[#123456]`, not a raw `oklch(...)`.
 - **The available set:** background/foreground, card, popover, primary, secondary, muted, accent, destructive, border, input, ring, chart-1…5, sidebar-*.
+- **Brand marks are the one exception.** A third-party logo keeps its own colours, because their brand guidelines require it and a recoloured logo is a licence problem rather than a design choice. Google's four colours live in `src/components/icons/google.tsx` and nowhere else.
 - **Radius** comes from `--radius` (1.05rem) and its derived scale. Use `rounded-lg`. Never `rounded-[17px]`.
 - **Shadows** come from `--shadow-2xs` through `2xl`. Use `shadow-sm`. Never a hand-written `box-shadow`.
 - **Spacing** unit is 0.25rem, so Tailwind's numeric scale *is* the spacing system: `p-4` is 1rem. Use it rather than arbitrary values, and reach for the larger steps — principle 2.
