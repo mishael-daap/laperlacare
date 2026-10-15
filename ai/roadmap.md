@@ -15,7 +15,7 @@ When the content is final, delete these comments. -->
 - **Goal**: The Postgres schema for every core entity, with RLS policies on each table.
 
 ## 2.1. Landing page
-- **Status**: pending
+- **Status**: in development
 - **Goal**: A public page that explains the service to parents and to caregivers and sends each to the right signup.
 
 ## 3. Household accounts

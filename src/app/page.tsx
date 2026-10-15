@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button";
+import { Hero } from "@/components/landing/hero";
 
 export default function Home() {
   return (
-    <main className="p-8">
-      <Button>UICHECK</Button>
+    <main className="flex-1">
+      <Hero />
     </main>
   );
 }
