@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { Great_Vibes, JetBrains_Mono, Playfair_Display, Poppins } from "next/font/google";
-
-import { Footer } from "@/components/landing/footer";
 
 import "./globals.css";
 
@@ -56,18 +53,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         {children}
-
-        {/*
-          The footer lives here rather than on each page so sign-out is reachable
-          from everywhere. It is the only part of the app that reads the session,
-          so it cannot be prerendered, and Suspense is what keeps the pages
-          themselves static: the shell is prerendered as before and this strip is
-          resolved per request. The fallback repeats the footer's own padding and
-          background so nothing shifts when it arrives.
-        */}
-        <Suspense fallback={<div className="bg-foreground px-6 py-12 sm:px-10 lg:px-16" />}>
-          <Footer />
-        </Suspense>
       </body>
     </html>
   );

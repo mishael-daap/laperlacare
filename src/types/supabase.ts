@@ -89,25 +89,75 @@ export type Database = {
           },
         ]
       }
+      caregiver_documents: {
+        Row: {
+          caregiver_id: string
+          created_at: string
+          file_name: string | null
+          id: string
+          kind: string
+          review_status: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          storage_path: string
+        }
+        Insert: {
+          caregiver_id: string
+          created_at?: string
+          file_name?: string | null
+          id?: string
+          kind: string
+          review_status?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          storage_path: string
+        }
+        Update: {
+          caregiver_id?: string
+          created_at?: string
+          file_name?: string | null
+          id?: string
+          kind?: string
+          review_status?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "caregiver_documents_caregiver_id_fkey"
+            columns: ["caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       caregivers: {
         Row: {
           avatar_path: string | null
+          bio: string | null
           created_at: string
-          display_name: string
+          display_name: string | null
+          submitted_at: string | null
           user_id: string
           verification_status: string
         }
         Insert: {
           avatar_path?: string | null
+          bio?: string | null
           created_at?: string
-          display_name: string
+          display_name?: string | null
+          submitted_at?: string | null
           user_id: string
           verification_status?: string
         }
         Update: {
           avatar_path?: string | null
+          bio?: string | null
           created_at?: string
-          display_name?: string
+          display_name?: string | null
+          submitted_at?: string | null
           user_id?: string
           verification_status?: string
         }

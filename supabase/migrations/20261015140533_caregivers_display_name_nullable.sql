@@ -1,0 +1,15 @@
+-- Lets a caregiver row exist before they have told us their name.
+--
+-- The row is created at caregiver sign-up, because that is what makes somebody
+-- a caregiver rather than a parent. But sign-up is deliberately just an email
+-- and a password — the name is one of the onboarding stages, along with the bio.
+--
+-- The alternative was a placeholder name derived from the email address, which
+-- would then sit in the database looking like real data and be impossible to
+-- tell apart from a name somebody actually chose. A null is honest: the row
+-- exists, the name has not been given.
+--
+-- Safe because the catalogue only ever shows approved caregivers, and nobody is
+-- approved without a name — displayed_name is part of the completeness count an
+-- admin reviews against.
+alter table public.caregivers alter column display_name drop not null;

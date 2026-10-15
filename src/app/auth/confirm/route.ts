@@ -1,7 +1,9 @@
 import type { EmailOtpType } from "@supabase/supabase-js";
+import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 
-import { ensureHousehold } from "@/lib/auth/ensure-household";
+import { ensureCaregiverRow } from "@/lib/caregiver/ensure-caregiver-row";
+import { isCaregiver } from "@/lib/caregiver/is-caregiver";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -17,10 +19,7 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
-  const requested = searchParams.get("next") ?? "/caregivers";
-
-  const next =
-    requested.startsWith("/") && !requested.startsWith("//") ? requested : "/caregivers";
+  const requested = searchParams.get("next") ?? "";
 
   if (!tokenHash || !type) {
     return NextResponse.redirect(
@@ -28,8 +27,14 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  const store = await cookies();
+  const startedAsCaregiver = store.get("signup_intent")?.value === "caregiver";
+
   const supabase = await createClient();
-  const { error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
+  const { data, error } = await supabase.auth.verifyOtp({
+    type,
+    token_hash: tokenHash,
+  });
 
   if (error) {
     return NextResponse.redirect(
@@ -37,7 +42,18 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  await ensureHousehold(supabase);
+  // This is the caregiver path when confirmation is on: sign-up could not write
+  // the row because there was no session yet. The intent cookie survives the
+  // round trip, so this is where it gets done.
+  if (startedAsCaregiver && data.user) {
+    await ensureCaregiverRow(supabase, data.user.id);
+    store.delete("signup_intent");
+  }
+
+  const fallback = (await isCaregiver(supabase)) ? "/me" : "/caregivers";
+
+  const next =
+    requested.startsWith("/") && !requested.startsWith("//") ? requested : fallback;
 
   return NextResponse.redirect(`${origin}${next}`);
 }

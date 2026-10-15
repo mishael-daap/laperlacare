@@ -37,6 +37,10 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -99,6 +103,17 @@
   --accent: oklch(0.9700 0 0);
   --accent-foreground: oklch(0.6423 0.1147 247.9912);
   --destructive: oklch(0.5770 0.2450 27.3250);
+  /* Added for the caregiver verification badge. The theme shipped no success
+     or warning colour, and a status meaning "you are fine" versus "we are
+     still looking" needs to be told apart at a glance. */
+  /* Bright rather than deep. The first pass was a dark forest green, which read
+     as "disabled" on the availability grid — a lit hour should look switched
+     on. The foreground flipped to near-black to match: white on a green this
+     light would have been unreadable. */
+  --success: oklch(0.7800 0.1900 148);
+  --success-foreground: oklch(0.2050 0 0);
+  --warning: oklch(0.8000 0.1500 82);
+  --warning-foreground: oklch(0.2050 0 0);
   --border: oklch(0.9220 0 0);
   --input: oklch(0.9220 0 0);
   --ring: oklch(0.7080 0 0);

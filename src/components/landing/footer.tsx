@@ -1,21 +1,18 @@
+import { Suspense } from "react";
+
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/lib/auth/actions";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * Section 7. One line on black, plus a sign-out control when signed in.
+ * The footer, and the only part of the app that knows who is signed in.
  *
- * No columns of links, no social icons, no newsletter box — none of it exists
- * to link to yet, and a footer that is mostly empty space with placeholder
- * links is worse than one line.
+ * Rendered per page rather than in the root layout: the profile page must not
+ * have it, and a layout cannot hand something back that the root layout already
+ * rendered. Pages that want it render it; pages that do not, do not.
  *
- * This is the only part of the page that knows who is signed in, so it cannot
- * be cached and it cannot be prerendered. `page.tsx` wraps it in Suspense,
- * which is what keeps the rest of the landing page static: the shell is
- * prerendered as before and this one strip is resolved per request.
- *
- * That also means `new Date()` is fine here. It is only rejected during
- * prerendering, and this never prerenders.
+ * It cannot be prerendered, which is why `SiteFooter` wraps it in Suspense —
+ * the page shell stays static and this one strip is resolved per request.
  */
 export async function Footer() {
   const supabase = await createClient();
@@ -41,5 +38,17 @@ export async function Footer() {
         ) : null}
       </div>
     </footer>
+  );
+}
+
+/**
+ * Drop this at the bottom of a page to give it a footer. The fallback repeats
+ * the real footer's padding and background so nothing shifts when it arrives.
+ */
+export function SiteFooter() {
+  return (
+    <Suspense fallback={<div className="bg-foreground px-6 py-12 sm:px-10 lg:px-16" />}>
+      <Footer />
+    </Suspense>
   );
 }

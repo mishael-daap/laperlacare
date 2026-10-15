@@ -23,7 +23,7 @@ When the content is final, delete these comments. -->
 - **Goal**: A parent can create an account with Google or email, sign in, and sign out, and every screen knows whether they are signed in. No profile page and no household or child management.
 
 ## 4. Caregiver onboarding
-- **Status**: pending
+- **Status**: completed
 - **Goal**: Caregivers register, build a profile with their specialisations, upload their documents, and record their availability.
 
 ## 5. Admin dashboard and verification

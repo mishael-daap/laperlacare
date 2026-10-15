@@ -5,13 +5,11 @@ import type { Database } from "@/types/supabase";
 /**
  * Makes sure the signed-in person has a household.
  *
- * Called after a session first exists — on sign-up, on sign-in, and on the
- * OAuth callback. Safe to call every time: the function behind it returns the
- * existing household when there is one and only creates on the first call.
- *
- * It has to happen silently. There is no household screen and there may never
- * be one, but the subscription attaches to a household, so an account without
- * one could not be billed later.
+ * NOT CALLED ANYWHERE YET, and that is deliberate. It used to run on every
+ * sign-up and sign-in, which made every account a parent with a household —
+ * including caregivers, who must never be either. Household creation now waits
+ * until after payment, where the parent is asked to name it. That is the
+ * billing feature's job; this stays here for it to call.
  */
 export async function ensureHousehold(supabase: SupabaseClient<Database>) {
   const { error } = await supabase.rpc("ensure_household");

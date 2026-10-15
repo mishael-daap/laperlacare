@@ -7,25 +7,46 @@ import { GoogleIcon } from "@/components/icons/google";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { googleAction, signInAction, signUpAction, type AuthState } from "@/lib/auth/actions";
+import {
+  caregiverSignUpAction,
+  googleAction,
+  signInAction,
+  signUpAction,
+  type AuthState,
+} from "@/lib/auth/actions";
 
 const COPY = {
-  up: { submit: "Create account", pending: "Creating account…", password: "new-password" },
-  in: { submit: "Sign in", pending: "Signing in…", password: "current-password" },
+  up: { submit: "Create account", pending: "Creating account…", autocomplete: "new-password" },
+  in: { submit: "Sign in", pending: "Signing in…", autocomplete: "current-password" },
 } as const;
 
 /**
- * One form for both sign-up and sign-in. They differ in the action, three
- * labels, and one autocomplete hint, so two components would be the same code
- * written twice.
+ * One form for four situations: signing up or in, as a parent or as a caregiver.
+ *
+ * They differ in the action, three labels, and which page the links point at —
+ * so four components would be the same code written four times. Signing in is
+ * genuinely the same operation either way; what differs is the framing and the
+ * pair of routes it links between, so nobody gets bounced from the caregiver
+ * pages into the parent ones.
  */
-export function AuthForm({ mode, next }: { mode: "up" | "in"; next?: string }) {
-  const action = mode === "up" ? signUpAction : signInAction;
+export function AuthForm({
+  mode,
+  caregiver = false,
+  next,
+}: {
+  mode: "up" | "in";
+  caregiver?: boolean;
+  next?: string;
+}) {
+  const action = mode === "up" && caregiver ? caregiverSignUpAction : mode === "up" ? signUpAction : signInAction;
   const [state, formAction, pending] = useActionState<AuthState, FormData>(
     action,
     undefined,
   );
   const copy = COPY[mode];
+
+  const signUpHref = caregiver ? "/caregivers/sign-up" : "/sign-up";
+  const signInHref = caregiver ? "/caregivers/sign-in" : "/sign-in";
 
   return (
     <div className="flex flex-col gap-8">
@@ -50,7 +71,7 @@ export function AuthForm({ mode, next }: { mode: "up" | "in"; next?: string }) {
             id="password"
             name="password"
             type="password"
-            autoComplete={copy.password}
+            autoComplete={copy.autocomplete}
             required
             minLength={6}
             className="h-11"
@@ -81,6 +102,13 @@ export function AuthForm({ mode, next }: { mode: "up" | "in"; next?: string }) {
       </div>
 
       <form action={googleAction}>
+        {/* Tells the callback to create a caregivers row on the way back. A
+            cookie carries it, not the URL, so the redirect allow-list does not
+            need to know about it. Only on sign-up: signing in must never create
+            a caregiver out of somebody who is not one. */}
+        {mode === "up" && caregiver ? (
+          <input type="hidden" name="intent" value="caregiver" />
+        ) : null}
         <Button type="submit" variant="outline" size="xl" className="w-full">
           <GoogleIcon className="size-5" />
           Continue with Google
@@ -88,18 +116,18 @@ export function AuthForm({ mode, next }: { mode: "up" | "in"; next?: string }) {
       </form>
 
       <p className="text-center text-sm text-muted-foreground">
-        {mode === "up" ? (
+        {mode === "in" ? (
           <>
-            Already have an account?{" "}
-            <Link href="/sign-in" className="text-foreground underline underline-offset-4">
-              Sign in
+            No account yet?{" "}
+            <Link href={signUpHref} className="text-foreground underline underline-offset-4">
+              Create one
             </Link>
           </>
         ) : (
           <>
-            No account yet?{" "}
-            <Link href="/sign-up" className="text-foreground underline underline-offset-4">
-              Create one
+            Already have an account?{" "}
+            <Link href={signInHref} className="text-foreground underline underline-offset-4">
+              Sign in
             </Link>
           </>
         )}
