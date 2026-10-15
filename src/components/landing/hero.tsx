@@ -46,6 +46,7 @@ export function Hero() {
         <img
           {...portraitRest}
           srcSet={portrait}
+          alt=""
           fetchPriority="high"
           className="absolute inset-0 h-full w-full object-cover"
         />

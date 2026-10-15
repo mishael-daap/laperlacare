@@ -33,7 +33,19 @@ There is no navigation, no footer, and no second path. One page, one destination
 
 **4. Guarantee** — full refund within 30 days if you do not find it useful.
 
-**5. Call to action** — "Subscribe to access the network"
+**5. FAQ** — five questions in a shadcn Accordion.
+
+| Question | Answer |
+|---|---|
+| How are caregivers vetted? | Every caregiver uploads a background check, a licence, and their certifications. We review each document before their profile appears, so only verified caregivers are in the network. |
+| What does the membership include? | One membership covers your whole household. It unlocks caregiver contacts, browsing with filters, the community, and events. |
+| Is this a childcare agency? | No. We are a directory and introduction service. We connect you with caregivers — you choose who to hire and arrange everything with them directly. |
+| What if it is not right for us? | Ask for a refund within 30 days and we will return what you paid. |
+| Where are you available? | Across California. |
+
+**6. Call to action** — copy on the left, button on the right, on one line. "Join the network" with the price and the 30 days beside it, and a button reading "Start for $10".
+
+**7. Footer** — one line on black, carrying the copyright. No links, because nothing exists to link to.
 
 ## Rules
 - Follows `ai/design.md`: minimal, generous space, one primary action, shadcn components only.

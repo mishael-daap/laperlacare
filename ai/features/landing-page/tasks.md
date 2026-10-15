@@ -1,15 +1,22 @@
 # Tasks: Landing page
 
-- [ ] Replace `src/app/page.tsx` with an empty page carrying `metadata` (title and description) and nothing else; verify `/` renders and the build stays static.
-- [ ] Add the hero section: `h1` with "California's most loving caregivers", the subheading on credential review, and the primary action; verify one `h1` on the page and correct heading order.
-- [ ] Add the benefits section with the three cards in order — browse caregivers, community, events; verify the copy stays within the directory framing and promises no care.
-- [ ] Add the first call to action, "Get access to the network"; verify it links to `/sign-up`.
-- [ ] Add the guarantee section stating the 30-day refund; verify it is visible without scrolling past the final action.
-- [ ] Add the closing call to action, "Subscribe to access the network"; verify both actions point to the same route.
-- [ ] Apply spacing and vertical rhythm across the page; verify it reads at 360px, 768px, and 1280px with no cramped or overflowing section.
-- [ ] Audit every class against `globals.css`; verify no colour, radius, or shadow falls outside the theme tokens and no `dark:` class was added.
-- [ ] Check accessibility: heading order, landmark sections, contrast against the theme tokens, and focus states on both actions.
-- [ ] Run Lighthouse; verify accessibility and best practices both reach 100.
-- [ ] Verify the page renders with the network unavailable.
-- [ ] Run `pnpm lint`, `pnpm typecheck`, and `pnpm build`.
-- [ ] Update `ai/roadmap.md` status.
+Built section by section, directed rather than pre-planned, so the list below is what actually shipped rather than the order it was written in.
+
+- [x] Replace `src/app/page.tsx` and set real page metadata; the create-next-app default title and description are gone.
+- [x] Hero: full-bleed photograph switched by media query between two crops, a transparent cut-out centred with its bottom edge on the viewport bottom, and the copy bottom-left on top of both.
+- [x] Benefits: three items under an `h2` reading "Features", no cards and no icons.
+- [x] First call to action: a centred `Card` on the primary colour, soft corners, reading "Get access to the network" with the price and a button labelled "Join".
+- [x] Guarantee: money back within 30 days, deliberately quieter than the sections around it.
+- [x] FAQ: five questions in a shadcn Accordion, no hover underline, sized up for readability.
+- [x] Final call to action: copy left and button right on one line, button reading "Start for $10".
+- [x] Footer: one line on `bg-foreground` carrying the copyright.
+- [x] Audit every class against `globals.css`; no colour, radius, or shadow outside the theme tokens, and no `dark:` classes added.
+- [x] Heading order checked: one `h1`, section `h2`s, and `h3`s inside Features.
+- [x] `pnpm lint`, `pnpm typecheck`, and `pnpm build` pass; `/` prerenders static.
+
+Not done yet:
+
+- [ ] **Lighthouse** accessibility and best-practices audit. Not run. The likely findings are contrast on the hero, since the overlay was removed at request and both photographs measure bright, and the backdrop `img` which carries an empty alt behind decorative intent.
+- [ ] **Render with the network unavailable.** The page fetches nothing, so this should hold, but it has not been confirmed by actually disabling the network.
+- [ ] **Compress the hero images.** They total about 4 MB in `public/hero`, which is heavy for the repo even though Next optimises what visitors download.
+- [ ] **The calls to action point at `/sign-up`, which does not exist.** It arrives with household accounts. Until then the buttons are dead links.
