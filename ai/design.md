@@ -40,7 +40,7 @@ Every colour, radius, shadow, and font comes from `src/app/globals.css`. Nothing
 - **Radius** comes from `--radius` (1.05rem) and its derived scale. Use `rounded-lg`. Never `rounded-[17px]`.
 - **Shadows** come from `--shadow-2xs` through `2xl`. Use `shadow-sm`. Never a hand-written `box-shadow`.
 - **Spacing** unit is 0.25rem, so Tailwind's numeric scale *is* the spacing system: `p-4` is 1rem. Use it rather than arbitrary values, and reach for the larger steps — principle 2.
-- **Fonts:** `font-sans` is Poppins, `font-serif` Playfair Display, `font-mono` JetBrains Mono. `font-heading` maps to the sans face, so headings are Poppins too.
+- **Fonts:** `font-sans` is Poppins, `font-serif` Playfair Display, `font-mono` JetBrains Mono, `font-cursive` Great Vibes. `font-heading` maps to the sans face, so headings are Poppins too. Cursive is for a single decorative word, never for a phrase or for body text — it stops being legible the moment it carries a sentence.
 - **This app is light only.** There is no dark mode and there will not be one. The `dark:` classes left in some shadcn components are inert, and they are inert for exactly one reason: the `dark` variant in `globals.css` is pinned to a `.dark` class that is never applied. **Do not delete that line.** Tailwind v4 sends `dark:` to `prefers-color-scheme` by default, so removing it would give a visitor whose operating system is in dark mode half-applied dark styles out of those components. Do not add a `.dark` class anywhere either. `html` sets `color-scheme: light` so native scrollbars and form controls match.
 
 ## Applying these

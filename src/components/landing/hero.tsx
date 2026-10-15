@@ -65,7 +65,11 @@ export function Hero() {
       {/* Layer 3 — the copy, anchored bottom-left. */}
       <div className="relative flex max-w-2xl flex-col items-start gap-6 text-left">
         <h1 className="font-heading text-3xl font-medium tracking-tight text-balance text-background sm:text-5xl md:text-6xl">
-          California&rsquo;s most loving caregivers
+          California&rsquo;s most{" "}
+          <span className="font-cursive text-5xl leading-tight font-normal sm:text-7xl md:text-8xl">
+            loving
+          </span>{" "}
+          caregivers
         </h1>
 
         <p className="max-w-lg text-base text-pretty text-background sm:text-lg">
