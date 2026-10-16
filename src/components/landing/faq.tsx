@@ -12,7 +12,7 @@ const faqs = [
   },
   {
     q: "What does the membership include?",
-    a: "One membership covers your whole household. It unlocks caregiver contacts, browsing with filters, the community, and events.",
+    a: "One membership covers your whole household. It unlocks caregiver matching and caregiver contact details.",
   },
   {
     q: "Is this a childcare agency?",
@@ -24,7 +24,7 @@ const faqs = [
   },
   {
     q: "Where are you available?",
-    a: "Across California.",
+    a: "Across Contra Costa County, California.",
   },
 ];
 

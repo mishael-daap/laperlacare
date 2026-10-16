@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { SiteFooter } from "@/components/landing/footer";
 
 export const metadata: Metadata = {
-  title: "Caregivers — La Perla Care",
+  title: "Caregivers — Perla Care",
   description: "Browse vetted caregivers across California.",
 };
 

@@ -257,7 +257,7 @@ pass = "env(RESEND_API_KEY)"
 # to the address the Resend account belongs to. Replace with an address on a
 # verified domain before launch.
 admin_email = "onboarding@resend.dev"
-sender_name = "La Perla Care"
+sender_name = "Perla Care"
 
 # Uncomment to customize email template
 # [auth.email.template.invite]

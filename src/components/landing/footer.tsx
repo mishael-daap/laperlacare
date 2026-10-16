@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -22,20 +23,39 @@ export async function Footer() {
   return (
     <footer className="bg-foreground px-6 py-12 text-background sm:px-10 lg:px-16">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-6">
-        <p className="text-sm text-background/70">© {year} La Perla Care</p>
+        <p className="text-sm text-background/70">© {year} Perla Care</p>
 
-        {data?.claims ? (
-          <form action={signOutAction}>
-            <Button
-              type="submit"
-              variant="ghost"
-              size="sm"
-              className="text-background/70 hover:bg-transparent hover:text-background"
-            >
-              Sign out
-            </Button>
-          </form>
-        ) : null}
+        <div className="flex items-center gap-6">
+          {/* The only navigation in the app. A nav bar would be a second way to
+              leave every page; one link, in the footer, is enough to stop the
+              about page being orphaned. */}
+          <Link
+            href="/about"
+            className="text-sm text-background/70 transition-opacity hover:opacity-80"
+          >
+            About
+          </Link>
+
+          <Link
+            href="/contact"
+            className="text-sm text-background/70 transition-opacity hover:opacity-80"
+          >
+            Contact
+          </Link>
+
+          {data?.claims ? (
+            <form action={signOutAction}>
+              <Button
+                type="submit"
+                variant="ghost"
+                size="sm"
+                className="text-background/70 hover:bg-transparent hover:text-background"
+              >
+                Sign out
+              </Button>
+            </form>
+          ) : null}
+        </div>
       </div>
     </footer>
   );

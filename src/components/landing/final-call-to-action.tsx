@@ -20,12 +20,17 @@ export function FinalCallToAction() {
       <div className="mx-auto flex max-w-6xl flex-col gap-10 sm:flex-row sm:items-center sm:justify-between sm:gap-16">
         <div className="flex flex-col gap-3">
           <h2 className="font-heading text-3xl font-medium tracking-tight text-balance sm:text-4xl md:text-5xl">
-            Join the network
+            Ready to find your caregiver
           </h2>
 
           <p className="text-lg text-pretty text-muted-foreground">
-            One membership per household. $10 a month, with 30 days to change
-            your mind.
+            Tell us about your child, your family&rsquo;s needs, and the kind of
+            support you are looking for. Perla Care will help you connect with
+            caregivers who may be a good fit for your family.
+          </p>
+
+          <p className="text-muted-foreground">
+            $10 a month, with 30 days to change your mind.
           </p>
         </div>
 
@@ -35,7 +40,7 @@ export function FinalCallToAction() {
           className="shrink-0"
           render={<Link href="/sign-up" />}
         >
-          Start for $10
+          Find your caregiver
         </Button>
       </div>
     </section>

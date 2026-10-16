@@ -11,7 +11,7 @@ import { AuthForm } from "@/components/auth/auth-form";
 export const instant = false;
 
 export const metadata: Metadata = {
-  title: "Create your account — La Perla Care",
+  title: "Create your account — Perla Care",
   description: "Join the network and start browsing vetted caregivers.",
 };
 
@@ -27,7 +27,7 @@ export default async function SignUpPage({
           href="/"
           className="font-heading text-sm text-muted-foreground underline-offset-4 hover:underline"
         >
-          La Perla Care
+          Perla Care
         </Link>
 
         <h1 className="mt-8 font-heading text-3xl font-medium tracking-tight">

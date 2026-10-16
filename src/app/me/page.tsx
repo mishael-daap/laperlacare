@@ -14,7 +14,7 @@ import { env } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Your profile — La Perla Care",
+  title: "Your profile — Perla Care",
 };
 
 /**

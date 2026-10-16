@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AuthForm } from "@/components/auth/auth-form";
 
 export const metadata: Metadata = {
-  title: "Caregiver sign in — La Perla Care",
+  title: "Caregiver sign in — Perla Care",
   description: "Sign in to manage your caregiver profile.",
 };
 
@@ -36,7 +36,7 @@ export default async function CaregiverSignInPage({
           href="/"
           className="font-heading text-sm text-muted-foreground underline-offset-4 hover:underline"
         >
-          La Perla Care
+          Perla Care
         </Link>
 
         <h1 className="mt-8 font-heading text-3xl font-medium tracking-tight">

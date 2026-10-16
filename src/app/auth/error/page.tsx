@@ -11,7 +11,7 @@ import { buttonVariants } from "@/components/ui/button";
 export const instant = false;
 
 export const metadata: Metadata = {
-  title: "That link did not work — La Perla Care",
+  title: "That link did not work — Perla Care",
 };
 
 /**

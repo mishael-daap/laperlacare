@@ -76,6 +76,7 @@ At the start of a session, or whenever unsure:
 
 - **One thing at a time.** One feature, one task. Finish before starting the next.
 - **New dependencies.** Before using a library, save its official docs to `ai/dependencies/<name>/docs.md` — fetch them yourself, or ask the user to paste them. Skip only if 100% certain how it behaves.
+- **Answer briefly.** Talk like a person, not a report. Straight to the point, fewest words that still answer it. No preamble, no restating the question, no padding, no unrequested essays. The user is deciding fast; long answers slow them down. Depth only when asked for it.
 - **Git.** Propose one concise commit message per logical change; wait for approval; commit.
 - **Doc hygiene.** Each fact lives in one place. When code or plans change, update the owning file. Don't copy rules or structure into other files.
 - **Conflicts.** User instructions > approved feature docs > existing code patterns > this file. Ask if still unclear.

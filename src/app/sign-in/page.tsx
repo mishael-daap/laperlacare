@@ -11,8 +11,8 @@ import { AuthForm } from "@/components/auth/auth-form";
 export const instant = false;
 
 export const metadata: Metadata = {
-  title: "Sign in — La Perla Care",
-  description: "Sign in to your La Perla Care account.",
+  title: "Sign in — Perla Care",
+  description: "Sign in to your Perla Care account.",
 };
 
 export default async function SignInPage({
@@ -27,7 +27,7 @@ export default async function SignInPage({
           href="/"
           className="font-heading text-sm text-muted-foreground underline-offset-4 hover:underline"
         >
-          La Perla Care
+          Perla Care
         </Link>
 
         <h1 className="mt-8 font-heading text-3xl font-medium tracking-tight">

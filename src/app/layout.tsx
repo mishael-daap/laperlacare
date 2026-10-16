@@ -40,9 +40,9 @@ const greatVibes = Great_Vibes({
 });
 
 export const metadata: Metadata = {
-  title: "La Perla Care — California's most loving caregivers",
+  title: "Perla Care — Specialized caregiver matching",
   description:
-    "A network of vetted caregivers across California. Every caregiver is reviewed before they appear, so you are choosing from the best.",
+    "Specialized caregiver matching for families of children with special needs. Serving Contra Costa County, California.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
