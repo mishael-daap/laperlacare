@@ -229,13 +229,13 @@ web3 = 30
 enable_signup = true
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
-double_confirm_changes = false
+double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
 #
-# OFF for development. Supabase's built-in sender is capped at a few emails an
-# hour, so leaving this on means every sign-up depends on an email that probably
-# will not arrive. Turn it back on before launch, once Resend is the sender.
-enable_confirmations = false
+# ON, matching the hosted project. Resend is the sender now, so confirmation
+# mail actually arrives. It used to be off while Supabase's built-in sender was
+# in use — that sender is capped at a few emails an hour.
+enable_confirmations = true
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
@@ -254,10 +254,10 @@ user = "resend"
 # Read from the environment at push time, so the key never enters the repo.
 pass = "env(RESEND_API_KEY)"
 # onboarding@resend.dev works without a verified domain, but it can only send
-# to the address the Resend account belongs to. Replace with an address on a
-# verified domain before launch.
-admin_email = "onboarding@resend.dev"
-sender_name = "Perla Care"
+# to the address the Resend account belongs to. laperlacare.com is verified in
+# Resend, so this is the address auth mail goes out from.
+admin_email = "noreply@laperlacare.com"
+sender_name = "La Perla Care"
 
 # Uncomment to customize email template
 # [auth.email.template.invite]
@@ -344,6 +344,24 @@ secret = "env(SUPABASE_AUTH_EXTERNAL_APPLE_SECRET)"
 redirect_uri = ""
 # Overrides the default auth provider URL. Used to support self-hosted gitlab, single-tenant Azure,
 # or any other third-party OIDC providers.
+url = ""
+# If enabled, the nonce check will be skipped. Required for local sign in with Google auth.
+skip_nonce_check = false
+# If enabled, it will allow the user to successfully authenticate when the provider does not return an email address.
+email_optional = false
+
+# Google sign-in. The authorized redirect URI registered on the OAuth client in
+# Google Cloud is Supabase's callback, not this app's:
+# https://ljczihdhbdgeqeytjhbw.supabase.co/auth/v1/callback
+# This app's own /auth/callback is a redirect URL in the Supabase dashboard.
+[auth.external.google]
+enabled = true
+client_id = "561519565781-7b9ri99k5hlk00qvn1b7ed2t3h4tmtl6.apps.googleusercontent.com"
+# DO NOT commit the OAuth secret to git. Read from the environment at push time.
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+# Overrides the default auth callback URL derived from auth.external_url.
+redirect_uri = ""
+# Overrides the default auth provider URL.
 url = ""
 # If enabled, the nonce check will be skipped. Required for local sign in with Google auth.
 skip_nonce_check = false
