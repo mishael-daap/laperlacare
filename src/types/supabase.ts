@@ -139,6 +139,8 @@ export type Database = {
           bio: string | null
           created_at: string
           display_name: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           submitted_at: string | null
           user_id: string
           verification_status: string
@@ -148,6 +150,8 @@ export type Database = {
           bio?: string | null
           created_at?: string
           display_name?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           submitted_at?: string | null
           user_id: string
           verification_status?: string
@@ -157,6 +161,8 @@ export type Database = {
           bio?: string | null
           created_at?: string
           display_name?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           submitted_at?: string | null
           user_id?: string
           verification_status?: string
@@ -274,6 +280,48 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_caregiver_counts: {
+        Args: never
+        Returns: {
+          approved_count: number
+          onboarding_count: number
+          pending_count: number
+          rejected_count: number
+          total_count: number
+        }[]
+      }
+      admin_caregiver_detail: {
+        Args: { p_user_id: string }
+        Returns: {
+          avatar_path: string
+          bio: string
+          created_at: string
+          display_name: string
+          email: string
+          reviewed_at: string
+          reviewed_by: string
+          submitted_at: string
+          user_id: string
+          verification_status: string
+        }[]
+      }
+      admin_caregiver_directory: {
+        Args: {
+          p_limit?: number
+          p_offset?: number
+          p_query?: string
+          p_status?: string
+        }
+        Returns: {
+          created_at: string
+          display_name: string
+          email: string
+          submitted_at: string
+          total_count: number
+          user_id: string
+          verification_status: string
+        }[]
+      }
       ensure_household: { Args: never; Returns: string }
     }
     Enums: {

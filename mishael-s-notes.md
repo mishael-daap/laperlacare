@@ -8,5 +8,8 @@ are the parents going to search the website themselves for the caregivers or are
 
 with that form the parent will only be able to add one child which is not what we want 
 
-I saw preffered days and preffered time and hours of care needed per week and preffered care giver on the sign up form, is it something the parent is going to set only once or does it change often? 
+I saw preffered days and preffered time and hours of care needed per week and preffered care giver on the sign up form, is it something the parent is going to set only once or does it change often?
+
+## Asks for the boss
+- When an admin rejects a caregiver, should the caregiver be told why? Right now a rejection only flips the status, with no reason recorded. Adding one touches the schema (`caregivers` would need a rejection reason column), the `/me` status badge, and possibly an email. 
 

@@ -10,7 +10,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "db:types": "supabase gen types typescript --linked > src/types/supabase.ts",
     "db:push": "supabase db push --linked",
-    "db:pull": "supabase db pull --linked"
+    "db:pull": "supabase db pull --linked",
+    "seed:caregivers": "node --env-file=.env.local scripts/seed-caregivers.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

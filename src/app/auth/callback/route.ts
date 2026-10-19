@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 
+import { isAdmin } from "@/lib/admin/is-admin";
 import { ensureCaregiverRow } from "@/lib/caregiver/ensure-caregiver-row";
 import { isCaregiver } from "@/lib/caregiver/is-caregiver";
 import { createClient } from "@/lib/supabase/server";
@@ -43,7 +44,14 @@ export async function GET(request: NextRequest) {
     store.delete("signup_intent");
   }
 
-  const fallback = (await isCaregiver(supabase)) ? "/me" : "/caregivers";
+  // Admin first, for the same reason as the password path: an admin holds a row
+  // in `admins`, which is a deliberate appointment rather than an accident of
+  // also being a caregiver.
+  const fallback = (await isAdmin(supabase))
+    ? "/admin/caregiver"
+    : (await isCaregiver(supabase))
+      ? "/me"
+      : "/caregivers";
 
   // Same-site paths only, or a crafted link could bounce someone to another
   // site straight after signing in here.

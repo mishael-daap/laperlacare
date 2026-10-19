@@ -32,10 +32,13 @@ const COPY = {
 export function AuthForm({
   mode,
   caregiver = false,
+  admin = false,
   next,
 }: {
   mode: "up" | "in";
   caregiver?: boolean;
+  /** Hides the sign-up links: there are no admin accounts to create. */
+  admin?: boolean;
   next?: string;
 }) {
   const action = mode === "up" && caregiver ? caregiverSignUpAction : mode === "up" ? signUpAction : signInAction;
@@ -115,23 +118,25 @@ export function AuthForm({
         </Button>
       </form>
 
-      <p className="text-center text-sm text-muted-foreground">
-        {mode === "in" ? (
-          <>
-            No account yet?{" "}
-            <Link href={signUpHref} className="text-foreground underline underline-offset-4">
-              Create one
-            </Link>
-          </>
-        ) : (
-          <>
-            Already have an account?{" "}
-            <Link href={signInHref} className="text-foreground underline underline-offset-4">
-              Sign in
-            </Link>
-          </>
-        )}
-      </p>
+      {admin ? null : (
+        <p className="text-center text-sm text-muted-foreground">
+          {mode === "in" ? (
+            <>
+              No account yet?{" "}
+              <Link href={signUpHref} className="text-foreground underline underline-offset-4">
+                Create one
+              </Link>
+            </>
+          ) : (
+            <>
+              Already have an account?{" "}
+              <Link href={signInHref} className="text-foreground underline underline-offset-4">
+                Sign in
+              </Link>
+            </>
+          )}
+        </p>
+      )}
     </div>
   );
 }

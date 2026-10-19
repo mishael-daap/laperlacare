@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { isAdmin } from "@/lib/admin/is-admin";
 import { ensureCaregiverRow } from "@/lib/caregiver/ensure-caregiver-row";
 import { isCaregiver } from "@/lib/caregiver/is-caregiver";
 import { env } from "@/lib/env";
@@ -15,6 +16,9 @@ const CATALOGUE = "/caregivers";
 
 /** Where a caregiver lands instead. Their own page. */
 const PROFILE = "/me";
+
+/** Where an admin lands. The review queue. */
+const ADMIN = "/admin/caregiver";
 
 /**
  * Remembers that somebody started signing up as a caregiver, across the Google
@@ -46,8 +50,16 @@ function safeNext(value: string | null | undefined, fallback: string) {
   return value;
 }
 
-/** A caregiver belongs on their own page; everybody else on the catalogue. */
+/**
+ * An admin belongs in the review queue, a caregiver on their own page, everybody
+ * else on the catalogue.
+ *
+ * Admin is checked first. Holding an `admins` row is a deliberate act, and a
+ * staff account that also happens to be a caregiver should not be sent to the
+ * caregiver profile and left wondering where the queue went.
+ */
 async function landingPath(supabase: Awaited<ReturnType<typeof createClient>>) {
+  if (await isAdmin(supabase)) return ADMIN;
   return (await isCaregiver(supabase)) ? PROFILE : CATALOGUE;
 }
 
