@@ -27,7 +27,7 @@ When the content is final, delete these comments. -->
 - **Goal**: Caregivers register, build a profile with their specialisations, upload their documents, and record their availability.
 
 ## 5. Admin dashboard and verification
-- **Status**: in development
+- **Status**: completed
 - **Goal**: An admin signs in, reviews caregivers by status and search, opens their background check, and approves or rejects them.
 
 ## 6. Caregiver catalog and profiles
