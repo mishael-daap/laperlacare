@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default async function SignUpPage({
   searchParams,
 }: PageProps<"/sign-up">) {
-  const { next } = await searchParams;
+  const { next, error } = await searchParams;
 
   return (
     <main className="flex flex-1 flex-col items-center justify-center px-6 py-16 sm:py-24">
@@ -37,6 +37,12 @@ export default async function SignUpPage({
         <p className="mt-3 text-muted-foreground">
           One membership covers your whole household.
         </p>
+
+        {error === "terms" ? (
+          <p role="alert" className="mt-6 text-sm text-destructive">
+            Please agree to the Terms &amp; Conditions to continue.
+          </p>
+        ) : null}
 
         <div className="mt-10">
           <AuthForm mode="up" next={typeof next === "string" ? next : undefined} />

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { GoogleIcon } from "@/components/icons/google";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -28,6 +29,11 @@ const COPY = {
  * genuinely the same operation either way; what differs is the framing and the
  * pair of routes it links between, so nobody gets bounced from the caregiver
  * pages into the parent ones.
+ *
+ * On sign-up, the two submit buttons live in one form so the Terms checkbox sits
+ * above both. The Google button overrides the form action and skips native
+ * validation (there is no password to validate), so the server checks consent
+ * again on that path.
  */
 export function AuthForm({
   mode,
@@ -46,7 +52,9 @@ export function AuthForm({
     action,
     undefined,
   );
+  const [agreed, setAgreed] = useState(false);
   const copy = COPY[mode];
+  const needsTerms = mode === "up";
 
   const signUpHref = caregiver ? "/caregivers/sign-up" : "/sign-up";
   const signInHref = caregiver ? "/caregivers/sign-in" : "/sign-in";
@@ -93,26 +101,63 @@ export function AuthForm({
           </p>
         ) : null}
 
+        {needsTerms ? (
+          <>
+            <input type="hidden" name="terms_required" value="1" />
+
+            {/* Tells the callback to create a caregivers row on the way back. A
+                cookie carries it, not the URL, so the redirect allow-list does
+                not need to know about it. Only on sign-up: signing in must never
+                create a caregiver out of somebody who is not one. */}
+            {caregiver ? <input type="hidden" name="intent" value="caregiver" /> : null}
+
+            <div className="flex items-start gap-3">
+              <Checkbox
+                id="terms"
+                name="terms"
+                required
+                checked={agreed}
+                onCheckedChange={setAgreed}
+                aria-labelledby="terms-label"
+                className="mt-0.5"
+              />
+              <Label
+                id="terms-label"
+                htmlFor="terms"
+                className="text-sm leading-normal font-normal text-pretty text-muted-foreground"
+              >
+                I have read and agree to the Perla Care{" "}
+                <Link
+                  href="/terms"
+                  className="text-foreground underline underline-offset-4"
+                >
+                  Terms &amp; Conditions
+                </Link>
+                .
+              </Label>
+            </div>
+          </>
+        ) : null}
+
         <Button type="submit" size="xl" disabled={pending} className="w-full">
           {pending ? copy.pending : copy.submit}
         </Button>
-      </form>
 
-      <div className="flex items-center gap-4">
-        <span className="h-px flex-1 bg-border" />
-        <span className="text-xs text-muted-foreground">or</span>
-        <span className="h-px flex-1 bg-border" />
-      </div>
+        <div className="flex items-center gap-4">
+          <span className="h-px flex-1 bg-border" />
+          <span className="text-xs text-muted-foreground">or</span>
+          <span className="h-px flex-1 bg-border" />
+        </div>
 
-      <form action={googleAction}>
-        {/* Tells the callback to create a caregivers row on the way back. A
-            cookie carries it, not the URL, so the redirect allow-list does not
-            need to know about it. Only on sign-up: signing in must never create
-            a caregiver out of somebody who is not one. */}
-        {mode === "up" && caregiver ? (
-          <input type="hidden" name="intent" value="caregiver" />
-        ) : null}
-        <Button type="submit" variant="outline" size="xl" className="w-full">
+        <Button
+          type="submit"
+          formAction={googleAction}
+          formNoValidate
+          variant="outline"
+          size="xl"
+          className="w-full"
+          disabled={pending || (needsTerms && !agreed)}
+        >
           <GoogleIcon className="size-5" />
           Continue with Google
         </Button>

@@ -22,10 +22,10 @@ export async function Footer() {
 
   return (
     <footer className="bg-foreground px-6 py-12 text-background sm:px-10 lg:px-16">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-6">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6">
         <p className="text-sm text-background/70">© {year} Perla Care</p>
 
-        <div className="flex items-center gap-6">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           {/* The only navigation in the app. A nav bar would be a second way to
               leave every page; one link, in the footer, is enough to stop the
               about page being orphaned. */}
@@ -41,6 +41,13 @@ export async function Footer() {
             className="text-sm text-background/70 transition-opacity hover:opacity-80"
           >
             Contact
+          </Link>
+
+          <Link
+            href="/terms"
+            className="text-sm text-background/70 transition-opacity hover:opacity-80"
+          >
+            Terms
           </Link>
 
           {data?.claims ? (

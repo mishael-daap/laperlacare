@@ -20,6 +20,9 @@ const PROFILE = "/me";
 /** Where an admin lands. The review queue. */
 const ADMIN = "/admin/caregiver";
 
+/** Shown when somebody tries to create an account without accepting the terms. */
+const TERMS_ERROR = "Please agree to the Terms & Conditions to continue.";
+
 /**
  * Remembers that somebody started signing up as a caregiver, across the Google
  * round trip.
@@ -74,6 +77,10 @@ export async function signUpAction(
     return { error: "Enter an email and a password." };
   }
 
+  if (formData.get("terms") !== "on") {
+    return { error: TERMS_ERROR };
+  }
+
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -111,6 +118,10 @@ export async function caregiverSignUpAction(
 
   if (!email || !password) {
     return { error: "Enter an email and a password." };
+  }
+
+  if (formData.get("terms") !== "on") {
+    return { error: TERMS_ERROR };
   }
 
   const supabase = await createClient();
@@ -163,6 +174,23 @@ export async function signInAction(
 }
 
 export async function googleAction(formData: FormData) {
+  // The Google button skips native validation because the email and password
+  // fields do not apply to it. That also skips the required checkbox, so the
+  // consent check is repeated here and the visitor is sent back to the form.
+  if (formData.get("terms_required") === "1" && formData.get("terms") !== "on") {
+    const params = new URLSearchParams({ error: "terms" });
+    const next = formData.get("next");
+
+    if (typeof next === "string" && next) {
+      params.set("next", next);
+    }
+
+    const page =
+      formData.get("intent") === "caregiver" ? "/caregivers/sign-up" : "/sign-up";
+
+    redirect(`${page}?${params.toString()}`);
+  }
+
   const store = await cookies();
 
   if (formData.get("intent") === "caregiver") {
