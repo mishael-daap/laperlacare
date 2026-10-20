@@ -36,7 +36,7 @@ Trigger: the user says **"set up the project"**.
 
 Trigger: the user says **"next feature"** (or approves starting one). One feature at a time — never two in flight.
 
-1. Read `ai/roadmap.md` and take the first feature whose status is not `completed`. If none: say so and stop.
+1. Read `ai/roadmap.md` and take the first feature whose status is not `completed` or `suspended`. If none: say so and stop.
 2. **Discuss** (chat only): purpose, user flow, edge cases, implementation approach. No files. The user may skip this step for speed — docs and gates still apply.
 3. Write `ai/features/<name>/spec.md`, `tech.md`, and `tasks.md` from `ai/feature-template.md`. Mark the roadmap item `spec ready`.
 4. Present a short summary and wait for approval to start coding (**Gate G2**). Review and iterate if needed.
@@ -52,6 +52,7 @@ A roadmap item's status is exactly one of:
 - `spec ready` — feature docs written; awaiting approval to code.
 - `in development` — approved; tasks being executed.
 - `completed` — built, tested, validated by the user.
+- `suspended` — deliberately not being built now; may return later. Skipped when choosing the next feature.
 
 Where the project stands at any moment = the roadmap statuses plus the unchecked tasks in the current feature's `tasks.md`.
 

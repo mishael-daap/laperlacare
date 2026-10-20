@@ -1,6 +1,6 @@
 <!-- The single source of truth for "what's next". Fill in during Phase 1 (see ai/workflow.md).
-Each item's status is one of: pending · spec ready · in development · completed.
-The next feature to build is the first item in this file that is not completed.
+Each item's status is one of: pending · spec ready · in development · completed · suspended.
+The next feature to build is the first item that is not completed or suspended.
 Keep this file to names, statuses, and one-line goals — all details live in ai/features/<name>/.
 When the content is final, delete these comments. -->
 
@@ -31,12 +31,20 @@ When the content is final, delete these comments. -->
 - **Goal**: An admin signs in, reviews caregivers by status and search, opens their background check, and approves or rejects them.
 
 ## 6. Caregiver catalog and profiles
-- **Status**: pending
-- **Goal**: Verified caregivers are listed and browsable by the public.
+- **Status**: suspended
+- **Goal**: A public, browsable catalog of verified caregivers. Paused while the parent household and matching flow is built; may return later.
 
 ## 7. Search and filters
+- **Status**: suspended
+- **Goal**: Parents can narrow the catalog by availability, gender, education level, certifications, and special-needs experience. Paused with the catalog; may return later.
+
+## 7.1. Parent household and child profiles
 - **Status**: pending
-- **Goal**: Parents can narrow the catalog by availability, gender, education level, certifications, and special-needs experience.
+- **Goal**: A parent manages their household in one place — any number of children, each with full name, date of birth (age derived from it), and a checklist of needs ticked from a fixed list — plus the household's preferred caregiver gender and the weekly days and hours it needs care, so there is something concrete to search caregivers against.
+
+## 7.2. Caregiver capabilities and credentials
+- **Status**: pending
+- **Goal**: A caregiver ticks the supports they can provide from the same fixed list parents tick, records the ages they work with and their gender, and uploads one document per licence or certification — driver's licence, CPR, BT — each approved or rejected by an admin individually with an expiry date, so caregivers can be searched by what they can actually do and what has actually been verified.
 
 ## 8. Membership and billing
 - **Status**: pending
