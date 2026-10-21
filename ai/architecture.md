@@ -47,10 +47,11 @@ Parent searches the catalog → server route confirms an active membership → v
 - Availability is stored in UTC alongside the caregiver's IANA timezone, so date and time filters are unambiguous across zones.
 - Admin entities use conventional, Salesforce-mappable shapes to keep a later migration open.
 - Special-needs capability is a set of filterable attributes on a caregiver, not a separate product surface. Special-needs families are a segment served by the same catalog, search, and billing as everyone else.
-- Auth is Supabase Auth. A household is the tenancy boundary, held in our own `households` and `household_members` tables; policies resolve membership through a `SECURITY DEFINER` helper so the membership table's own policies do not recurse.
+- Auth is Supabase Auth. A household is the tenancy boundary, held in our own `households` and `parents` tables; policies resolve membership through a `SECURITY DEFINER` helper so the membership table's own policies do not recurse.
 - RLS reads the caller through `auth.uid()`, which returns a `uuid`. Every column referencing a user is a `uuid` foreign key to `auth.users`.
-- `auth.users` is not extended in place. A `profiles` table in the public schema carries app-level user fields, populated by a trigger on user creation.
-- Caregivers sit outside any household: caregiver-owned rows are authorised by `auth.uid()` matching the row's `user_id`. Admin access is authorised by an `is_admin()` `SECURITY DEFINER` function over `profiles`.
+- `auth.users` is not extended in place. Parent fields live on `parents`, caregiver fields on `caregivers`, and admin status is a row in `admins`.
+- A household is created the first time a signed-in parent opens `/household`, not at payment. Billing attaches a subscription to that household; caregiver contact details remain the paywall.
+- Caregivers sit outside any household: caregiver-owned rows are authorised by `auth.uid()` matching the row's `user_id`. Admin access is authorised by an `is_admin()` `SECURITY DEFINER` function over `admins`.
 - Schema changes are committed migration files applied with the Supabase CLI. No table is ever created by hand in the dashboard.
 
 ## Constraints

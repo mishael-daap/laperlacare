@@ -14,8 +14,8 @@ import { createClient } from "@/lib/supabase/server";
  *
  * The destination is decided after the exchange, from whether the person turns
  * out to be a caregiver — not from where they started. Otherwise a caregiver
- * signing in through the ordinary sign-in page would land on the public
- * catalogue instead of their own page.
+ * signing in through the ordinary sign-in page would land on the household page
+ * instead of their own page.
  */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     ? "/admin/caregiver"
     : (await isCaregiver(supabase))
       ? "/me"
-      : "/caregivers";
+      : "/household";
 
   // Same-site paths only, or a crafted link could bounce someone to another
   // site straight after signing in here.

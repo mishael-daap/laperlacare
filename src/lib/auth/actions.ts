@@ -1,6 +1,6 @@
 "use server";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { isAdmin } from "@/lib/admin/is-admin";
@@ -11,8 +11,8 @@ import { createClient } from "@/lib/supabase/server";
 
 export type AuthState = { error?: string; message?: string } | undefined;
 
-/** Where a parent lands: the catalogue, which is the point of signing in. */
-const CATALOGUE = "/caregivers";
+/** Where a parent lands: their household, which is the point of signing in. */
+const HOUSEHOLD = "/household";
 
 /** Where a caregiver lands instead. Their own page. */
 const PROFILE = "/me";
@@ -63,7 +63,7 @@ function safeNext(value: string | null | undefined, fallback: string) {
  */
 async function landingPath(supabase: Awaited<ReturnType<typeof createClient>>) {
   if (await isAdmin(supabase)) return ADMIN;
-  return (await isCaregiver(supabase)) ? PROFILE : CATALOGUE;
+  return (await isCaregiver(supabase)) ? PROFILE : HOUSEHOLD;
 }
 
 export async function signUpAction(
@@ -81,15 +81,15 @@ export async function signUpAction(
     return { error: TERMS_ERROR };
   }
 
+  const origin = await requestOrigin();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     // Without this Supabase sends the confirmation link back to the Site
-    // URL, which is the bare root — the code then arrives at "/" where
-    // nothing exchanges it, so no session is created and the whole
-    // sign-up quietly does nothing.
-    options: { emailRedirectTo: `${env.NEXT_PUBLIC_SITE_URL}/auth/callback` },
+    // URL, which may be the bare root or another host. The code has to arrive
+    // at the callback route, where it is exchanged for a session.
+    options: { emailRedirectTo: `${origin}/auth/callback` },
   });
 
   if (error) {
@@ -103,10 +103,10 @@ export async function signUpAction(
     return { message: "Check your email to confirm your account, then sign in." };
   }
 
-  // No household here, deliberately. A household is created after payment, when
-  // the parent is asked to name it. Creating one at sign-up would make every
-  // account a parent — including caregivers, who must never be one.
-  redirect(safeNext(String(formData.get("next") ?? ""), CATALOGUE));
+  // No household here, deliberately. The household page creates it once the
+  // role is known. Creating one at sign-up would make every account a parent —
+  // including caregivers, who must never be one.
+  redirect(safeNext(String(formData.get("next") ?? ""), HOUSEHOLD));
 }
 
 export async function caregiverSignUpAction(
@@ -124,15 +124,15 @@ export async function caregiverSignUpAction(
     return { error: TERMS_ERROR };
   }
 
+  const origin = await requestOrigin();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     // Without this Supabase sends the confirmation link back to the Site
-    // URL, which is the bare root — the code then arrives at "/" where
-    // nothing exchanges it, so no session is created and the whole
-    // sign-up quietly does nothing.
-    options: { emailRedirectTo: `${env.NEXT_PUBLIC_SITE_URL}/auth/callback` },
+    // URL, which may be the bare root or another host. The code has to arrive
+    // at the callback route, where it is exchanged for a session.
+    options: { emailRedirectTo: `${origin}/auth/callback` },
   });
 
   if (error) {
@@ -173,6 +173,33 @@ export async function signInAction(
   redirect(safeNext(String(formData.get("next") ?? ""), landing));
 }
 
+/**
+ * The origin this request actually arrived on.
+ *
+ * OAuth has to come back to the same host that started it, because the PKCE
+ * verifier lives in a cookie on that host. `NEXT_PUBLIC_SITE_URL` is the
+ * canonical site and is the right base for emailed links, but it is wrong for a
+ * preview deployment — and it is wrong everywhere when it still says localhost.
+ *
+ * `x-forwarded-host` is what Vercel and most proxies set. The direct `host`
+ * header is the fallback for local development.
+ */
+async function requestOrigin() {
+  const headerStore = await headers();
+  const host =
+    headerStore.get("x-forwarded-host")?.split(",")[0]?.trim() ??
+    headerStore.get("host");
+  const protocol = headerStore.get("x-forwarded-proto")?.split(",")[0]?.trim();
+
+  if (!host) return env.NEXT_PUBLIC_SITE_URL;
+
+  if (protocol) return `${protocol}://${host}`;
+
+  return host.startsWith("localhost") || host.startsWith("127.0.0.1")
+    ? `http://${host}`
+    : `https://${host}`;
+}
+
 export async function googleAction(formData: FormData) {
   // The Google button skips native validation because the email and password
   // fields do not apply to it. That also skips the required checkbox, so the
@@ -197,10 +224,11 @@ export async function googleAction(formData: FormData) {
     store.set(INTENT_COOKIE, "caregiver", INTENT_COOKIE_OPTIONS);
   }
 
+  const origin = await requestOrigin();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: `${env.NEXT_PUBLIC_SITE_URL}/auth/callback` },
+    options: { redirectTo: `${origin}/auth/callback` },
   });
 
   if (error || !data.url) {

@@ -43,7 +43,7 @@ Still deferred to the search feature: `gender`, `education_level`, `certificatio
 Caregiver sign-up → account and `caregivers` row, no household → `/me` → completeness line → modal, stage by stage → each stage writes on its own → availability board separately.
 
 ## Notes
-- **Removing `ensureHousehold` from the auth paths is part of this feature.** It currently runs on every sign-up and sign-in and would make every caregiver a parent with a household. Household creation moves to billing, where the parent names it after paying. The function itself stays — billing will call it.
+- **Removing `ensureHousehold` from the auth paths is part of this feature.** It currently runs on every sign-up and sign-in and would make every caregiver a parent with a household. Household creation moves to the parent household page; billing attaches a subscription to the household that already exists. The function itself stays — that page calls it.
 - **Google needs the intent to travel.** A caregiver signing up through Google returns via the same `/auth/callback` as a parent, so the callback has to be told which it was. A value carried through the OAuth redirect, not a guess from the return URL.
 - **`/me` must not be cached.** It reads the session, so it is dynamic by nature. No `"use cache"`.
 - **The `caregivers` row is created at sign-up, not on first visit to `/me`.** Otherwise a caregiver who never opens their profile has no row and is indistinguishable from a parent.

@@ -39,7 +39,7 @@ When the content is final, delete these comments. -->
 - **Goal**: Parents can narrow the catalog by availability, gender, education level, certifications, and special-needs experience. Paused with the catalog; may return later.
 
 ## 7.1. Parent household and child profiles
-- **Status**: pending
+- **Status**: in development
 - **Goal**: A parent manages their household in one place — any number of children, each with full name, date of birth (age derived from it), and a checklist of needs ticked from a fixed list — plus the household's preferred caregiver gender and the weekly days and hours it needs care, so there is something concrete to search caregivers against.
 
 ## 7.2. Caregiver capabilities and credentials

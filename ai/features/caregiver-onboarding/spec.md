@@ -14,7 +14,7 @@ A caregiver can create an account and then build the profile parents will see: c
 8. Everything the modal covers is also editable directly on `/me`, so the modal is a shortcut rather than a gate.
 
 ## Rules
-- **Signing up never creates a household.** A household is created after payment, where the parent is asked to name it. Caregivers are never parents, and this is what keeps the two apart.
+- **Signing up never creates a household.** It is created when the parent first opens the household page. Caregivers are never parents, and this is what keeps the two apart.
 - **`/me` is role-aware.** It reads whether the caller has a `caregivers` row and renders accordingly. Parents have no profile page yet.
 - A caller with no `caregivers` row is not a caregiver. That is the only test needed.
 - **A `caregivers` row is created at caregiver sign-up**, which is what makes someone a caregiver.

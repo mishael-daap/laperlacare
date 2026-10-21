@@ -34,7 +34,7 @@ Deferred, and not forgotten:
 - [ ] **Google OAuth setup** — a Google Cloud project, an OAuth client, and the provider enabled in Supabase. The button exists and will fail until this is done.
 - [ ] **Turn email confirmation back on, with a verified Resend domain.** Confirmation is off for development; `onboarding@resend.dev` can only send to the Resend account's own address.
 - [ ] **Admin review of the uploaded documents**, which is the next roadmap item.
-- [ ] **Household naming and creation after payment**, which is the billing feature.
+- [ ] **Household naming**, which the billing feature can own. Household creation now lives in the parent household feature.
 - [ ] **A link to caregiver sign-up from the landing page.** It is parent-facing throughout.
 - [ ] **`gender`, `education_level`, `certifications[]`, `specialisations[]`, `timezone`** — the search feature.
 - [ ] **Documents cannot be previewed.** The bucket is private and a URL would have to be signed; that belongs to the review screen.

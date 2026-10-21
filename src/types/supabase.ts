@@ -169,6 +169,66 @@ export type Database = {
         }
         Relationships: []
       }
+      child_needs: {
+        Row: {
+          child_id: string
+          need_id: string
+        }
+        Insert: {
+          child_id: string
+          need_id: string
+        }
+        Update: {
+          child_id?: string
+          need_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_needs_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_needs_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "needs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      child_supports: {
+        Row: {
+          child_id: string
+          support_id: string
+        }
+        Insert: {
+          child_id: string
+          support_id: string
+        }
+        Update: {
+          child_id?: string
+          support_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_supports_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_supports_support_id_fkey"
+            columns: ["support_id"]
+            isOneToOne: false
+            referencedRelation: "supports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       children: {
         Row: {
           created_at: string
@@ -176,6 +236,7 @@ export type Database = {
           full_name: string
           household_id: string
           id: string
+          notes: string | null
         }
         Insert: {
           created_at?: string
@@ -183,6 +244,7 @@ export type Database = {
           full_name: string
           household_id: string
           id?: string
+          notes?: string | null
         }
         Update: {
           created_at?: string
@@ -190,6 +252,7 @@ export type Database = {
           full_name?: string
           household_id?: string
           id?: string
+          notes?: string | null
         }
         Relationships: [
           {
@@ -231,18 +294,77 @@ export type Database = {
         }
         Relationships: []
       }
+      household_availability: {
+        Row: {
+          day_of_week: number
+          end_time: string
+          household_id: string
+          id: string
+          start_time: string
+        }
+        Insert: {
+          day_of_week: number
+          end_time: string
+          household_id: string
+          id?: string
+          start_time: string
+        }
+        Update: {
+          day_of_week?: number
+          end_time?: string
+          household_id?: string
+          id?: string
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "household_availability_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       households: {
         Row: {
           created_at: string
           id: string
+          preferred_caregiver_gender: string
         }
         Insert: {
           created_at?: string
           id?: string
+          preferred_caregiver_gender?: string
         }
         Update: {
           created_at?: string
           id?: string
+          preferred_caregiver_gender?: string
+        }
+        Relationships: []
+      }
+      needs: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          position: number
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          position: number
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          position?: number
+          slug?: string
         }
         Relationships: []
       }
@@ -274,6 +396,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      supports: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          position: number
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          position: number
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          position?: number
+          slug?: string
+        }
+        Relationships: []
       }
     }
     Views: {
@@ -323,6 +469,17 @@ export type Database = {
         }[]
       }
       ensure_household: { Args: never; Returns: string }
+      save_child: {
+        Args: {
+          p_child_id?: string
+          p_date_of_birth?: string
+          p_full_name?: string
+          p_needs?: string[]
+          p_notes?: string
+          p_supports?: string[]
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
