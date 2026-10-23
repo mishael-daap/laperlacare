@@ -2,6 +2,9 @@
  * Age is derived from the date of birth every time it is shown. It is never a
  * column, so it cannot go stale.
  *
+ * Shared by children and caregivers: both store a calendar date and show an age,
+ * and neither should grow its own copy of this rule.
+ *
  * The date is a calendar date, not an instant. Parsing it with the local `Date`
  * constructor would put a birthday a day early or late depending on the
  * viewer's timezone, so the comparison happens in UTC.

@@ -93,6 +93,7 @@ export type Database = {
         Row: {
           caregiver_id: string
           created_at: string
+          expires_at: string | null
           file_name: string | null
           id: string
           kind: string
@@ -104,6 +105,7 @@ export type Database = {
         Insert: {
           caregiver_id: string
           created_at?: string
+          expires_at?: string | null
           file_name?: string | null
           id?: string
           kind: string
@@ -115,6 +117,7 @@ export type Database = {
         Update: {
           caregiver_id?: string
           created_at?: string
+          expires_at?: string | null
           file_name?: string | null
           id?: string
           kind?: string
@@ -133,39 +136,102 @@ export type Database = {
           },
         ]
       }
+      caregiver_needs: {
+        Row: {
+          caregiver_id: string
+          need_id: string
+        }
+        Insert: {
+          caregiver_id: string
+          need_id: string
+        }
+        Update: {
+          caregiver_id?: string
+          need_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "caregiver_needs_caregiver_id_fkey"
+            columns: ["caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "caregiver_needs_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "needs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      caregiver_supports: {
+        Row: {
+          caregiver_id: string
+          support_id: string
+        }
+        Insert: {
+          caregiver_id: string
+          support_id: string
+        }
+        Update: {
+          caregiver_id?: string
+          support_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "caregiver_supports_caregiver_id_fkey"
+            columns: ["caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "caregiver_supports_support_id_fkey"
+            columns: ["support_id"]
+            isOneToOne: false
+            referencedRelation: "supports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       caregivers: {
         Row: {
+          age_max: number | null
+          age_min: number | null
           avatar_path: string | null
           bio: string | null
           created_at: string
+          date_of_birth: string | null
           display_name: string | null
-          reviewed_at: string | null
-          reviewed_by: string | null
+          gender: string | null
           submitted_at: string | null
           user_id: string
-          verification_status: string
         }
         Insert: {
+          age_max?: number | null
+          age_min?: number | null
           avatar_path?: string | null
           bio?: string | null
           created_at?: string
+          date_of_birth?: string | null
           display_name?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
+          gender?: string | null
           submitted_at?: string | null
           user_id: string
-          verification_status?: string
         }
         Update: {
+          age_max?: number | null
+          age_min?: number | null
           avatar_path?: string | null
           bio?: string | null
           created_at?: string
+          date_of_birth?: string | null
           display_name?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
+          gender?: string | null
           submitted_at?: string | null
           user_id?: string
-          verification_status?: string
         }
         Relationships: []
       }
@@ -439,14 +505,18 @@ export type Database = {
       admin_caregiver_detail: {
         Args: { p_user_id: string }
         Returns: {
+          age_max: number
+          age_min: number
           avatar_path: string
           bio: string
           created_at: string
+          date_of_birth: string
           display_name: string
           email: string
-          reviewed_at: string
-          reviewed_by: string
+          gender: string
+          need_slugs: string[]
           submitted_at: string
+          support_slugs: string[]
           user_id: string
           verification_status: string
         }[]
@@ -469,6 +539,18 @@ export type Database = {
         }[]
       }
       ensure_household: { Args: never; Returns: string }
+      my_caregiver_status: { Args: never; Returns: string }
+      save_caregiver_capabilities: {
+        Args: {
+          p_age_max?: number
+          p_age_min?: number
+          p_date_of_birth?: string
+          p_gender?: string
+          p_needs?: string[]
+          p_supports?: string[]
+        }
+        Returns: undefined
+      }
       save_child: {
         Args: {
           p_child_id?: string

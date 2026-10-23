@@ -1,7 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
+import { capabilitiesInput } from "@/lib/caregiver/capabilities";
+import { DOCUMENT_KINDS, type DocumentKind } from "@/lib/caregiver/credentials";
 import { createClient } from "@/lib/supabase/server";
 
 export type SaveState = { error?: string; ok?: boolean } | undefined;
@@ -153,34 +156,113 @@ export async function saveAvatarPathAction(avatarPath: string): Promise<SaveStat
 }
 
 /**
- * Records an uploaded document. The row can only ever be inserted with the
- * default review status — a caregiver has no update policy on this table, which
- * is what stops them approving their own background check.
+ * Capabilities are saved whole, in one function call.
  *
- * Uploading a background check is also what counts as submitting for review,
- * which is why it stamps `submitted_at`. Bio and contact edits deliberately do
- * not: nothing was verified about them.
+ * The two tag sets, the date of birth, the gender, and the working age range go
+ * together or not at all — a save that landed half-applied would leave a
+ * caregiver searchable by needs they had just removed.
  */
-export async function saveDocumentAction(input: {
-  kind: "background_check" | "certification" | "other";
-  storagePath: string;
-  /** The name the caregiver chose, kept because the path is only a key. */
-  fileName: string;
-}): Promise<SaveState> {
-  const { supabase, userId } = await caller();
+export async function saveCapabilitiesAction(input: unknown): Promise<SaveState> {
+  const parsed = capabilitiesInput.safeParse(input);
 
-  const { error } = await supabase.from("caregiver_documents").insert({
-    caregiver_id: userId,
-    kind: input.kind,
-    storage_path: input.storagePath,
-    file_name: input.fileName,
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Check the form and try again." };
+  }
+
+  const { supabase } = await caller();
+
+  const { error } = await supabase.rpc("save_caregiver_capabilities", {
+    p_needs: parsed.data.needSlugs,
+    p_supports: parsed.data.supportSlugs,
+    p_date_of_birth: parsed.data.dateOfBirth ?? undefined,
+    p_gender: parsed.data.gender ?? undefined,
+    p_age_min: parsed.data.ageMin ?? undefined,
+    p_age_max: parsed.data.ageMax ?? undefined,
   });
 
   if (error) {
     return { error: error.message };
   }
 
-  if (input.kind === "background_check") {
+  revalidatePath("/me");
+  return { ok: true };
+}
+
+const documentKinds = DOCUMENT_KINDS.map((kind) => kind.value) as [
+  DocumentKind,
+  ...DocumentKind[],
+];
+
+const documentInput = z.object({
+  kind: z.enum(documentKinds, { error: "Choose a document kind." }),
+  /** Optional: not every document has one. */
+  expiresAt: z
+    .string()
+    .trim()
+    .transform((value) => (value === "" ? null : value))
+    .pipe(z.iso.date({ error: "Enter a valid expiry date." }).nullable())
+    .refine((value) => value === null || value >= new Date().toISOString().slice(0, 10), "That date has already passed."),
+  storagePath: z.string().min(1, "Choose a file."),
+  fileName: z.string().min(1, "Choose a file."),
+});
+
+/**
+ * Records an uploaded document.
+ *
+ * The row can only ever be inserted with the default review status: RLS refuses
+ * anything else, which is what stops a caregiver approving their own file.
+ *
+ * One document per kind is a rule of the app, not of the schema. Adding a CPR
+ * card replaces the old one, so the reviewer is never looking at two files that
+ * claim the same thing, and the kind returns to pending review on its own.
+ *
+ * Uploading a document is also what submits the profile, so `submitted_at` is
+ * stamped the first time and never cleared.
+ */
+export async function addDocumentAction(input: unknown): Promise<SaveState> {
+  const parsed = documentInput.safeParse(input);
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Check the file and try again." };
+  }
+
+  const { supabase, userId } = await caller();
+
+  // The bucket policy already scopes writes to the caller's folder. Checking the
+  // path here as well means a mis-keyed path fails before an upload has happened.
+  if (!parsed.data.storagePath.startsWith(`${userId}/`)) {
+    return { error: "That upload did not belong to this account." };
+  }
+
+  const { error: clearError } = await supabase
+    .from("caregiver_documents")
+    .delete()
+    .eq("caregiver_id", userId)
+    .eq("kind", parsed.data.kind);
+
+  if (clearError) {
+    return { error: clearError.message };
+  }
+
+  const { error } = await supabase.from("caregiver_documents").insert({
+    caregiver_id: userId,
+    kind: parsed.data.kind,
+    storage_path: parsed.data.storagePath,
+    file_name: parsed.data.fileName,
+    expires_at: parsed.data.expiresAt,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  const { data: profile } = await supabase
+    .from("caregivers")
+    .select("submitted_at")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (profile && !profile.submitted_at) {
     const { error: submitError } = await supabase
       .from("caregivers")
       .update({ submitted_at: new Date().toISOString() })
@@ -192,6 +274,35 @@ export async function saveDocumentAction(input: {
   }
 
   revalidatePath("/me");
+  revalidatePath("/admin/caregiver");
+  return { ok: true };
+}
+
+/**
+ * Removing an approved document is allowed, and it costs the caregiver their
+ * badge until a replacement is approved. The page says so before they press it.
+ */
+export async function removeDocumentAction(documentId: string): Promise<SaveState> {
+  const parsed = z.uuid({ error: "That document id is not valid." }).safeParse(documentId);
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message };
+  }
+
+  const { supabase, userId } = await caller();
+
+  const { error } = await supabase
+    .from("caregiver_documents")
+    .delete()
+    .eq("id", parsed.data)
+    .eq("caregiver_id", userId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/me");
+  revalidatePath("/admin/caregiver");
   return { ok: true };
 }
 

@@ -16,7 +16,7 @@
 - [x] Add `/household/loading.tsx` with a skeleton that matches the page.
 - [x] Change the parent landing path in `src/lib/auth/actions.ts` to `/household`, and make `ensureHousehold()` return the household id with its stale comment removed.
 - [x] Walk the acceptance criteria, including the cross-household API checks, then run `pnpm lint`, `pnpm typecheck`, and `pnpm build`.
-- [ ] Ask the user to validate before marking roadmap item 7.1 completed.
+- [x] Ask the user to validate before marking roadmap item 7.1 completed.
 
 Deferred:
 

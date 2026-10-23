@@ -31,7 +31,7 @@ Parent searches the catalog → server route confirms an active membership → v
 - **Caregiver** — the provider profile and its verification status.
 - **Caregiver document** — an uploaded licence, background check, or certification file.
 - **Certification** — a credential record attached to a caregiver (BT/RBT, education level).
-- **Specialisation** — special-needs experience and capability tags on a caregiver profile; filterable, and optional for the caregiver to declare.
+- **Specialisation** — special-needs experience and capability tags on a caregiver profile; filterable, and optional for the caregiver to declare. A caregiver ticks the same needs list parents tick, plus the supports they provide.
 - **Availability** — a caregiver's free time, stored with a timezone.
 - **Subscription** — Stripe-backed membership state for a household.
 - **Interest request** — a household's interest in a caregiver, plus the caregiver's response.
@@ -43,7 +43,7 @@ Parent searches the catalog → server route confirms an active membership → v
 - Caregiver phone numbers are never returned by catalog queries. They are served only through a server route that verifies an active subscription.
 - Caregiver documents live in a private bucket, reachable only by admins through short-lived signed URLs.
 - Stripe owns billing. Subscription state is mirrored into Postgres by webhook and never edited by hand.
-- Verification is an explicit state machine with an audit record of who reviewed what and when.
+- Verification is derived from documents, not decided about a person. Each licence or certification is reviewed on its own, with an expiry date and an audit record of who approved it and when; the caregiver's status is calculated from those rows and never stored.
 - Availability is stored in UTC alongside the caregiver's IANA timezone, so date and time filters are unambiguous across zones.
 - Admin entities use conventional, Salesforce-mappable shapes to keep a later migration open.
 - Special-needs capability is a set of filterable attributes on a caregiver, not a separate product surface. Special-needs families are a segment served by the same catalog, search, and billing as everyone else.

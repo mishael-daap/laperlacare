@@ -17,8 +17,8 @@ Households assemble childcare by hand today: calling regional centres, posting i
 
 ## Core Features
 - **Household accounts** — one account per family, with parent-managed profiles for every family member including the child.
-- **Caregiver onboarding** — registration, document upload (driver's licence, background check, certifications), and availability entry.
-- **Admin verification** — review queue where an admin approves or rejects each caregiver, plus user and listing management.
+- **Caregiver onboarding** — registration, a profile of the needs they can support, the supports they provide, the ages they work with, and their own details, plus one document per licence or certification, each with an optional expiry, and their availability.
+- **Admin verification** — review queue where an admin opens a caregiver and approves or rejects each document on its own, plus user and listing management.
 - **Caregiver catalog** — verified caregivers only, with browsable profiles.
 - **Search and filters** — availability by date and time, gender, education level, certifications such as BT/RBT, and experience with special needs.
 - **Membership** — a flat monthly fee that unlocks full network access.

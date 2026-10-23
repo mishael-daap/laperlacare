@@ -9,33 +9,38 @@ import { createClient } from "@/lib/supabase/server";
 export type ReviewState = { error?: string; ok?: boolean } | undefined;
 
 const schema = z.object({
-  caregiverId: z.uuid({ error: "That caregiver id is not valid." }),
+  documentId: z.uuid({ error: "That document id is not valid." }),
   status: z.enum(["approved", "rejected"], {
     error: "A decision is either approved or rejected.",
   }),
 });
 
 /**
- * The only write an admin makes.
+ * The one write an admin makes.
  *
- * RLS already refuses a non-admin, and the guard trigger refuses a non-admin
- * changing `verification_status`, but the check is repeated here so the action
+ * A decision is now about a document, not about a person. Approving a
+ * background check says nothing about the CPR card beside it, which is the
+ * whole point: a caregiver's badge is derived from what is actually approved,
+ * so an admin setting it by hand would be a second, contradicting answer.
+ *
+ * There is no "pending" decision. Undoing an approval means rejecting it, or
+ * waiting for the caregiver to replace the file, which puts the replacement
+ * back to pending on its own.
+ *
+ * RLS already refuses a non-admin, but the check is repeated here so the action
  * says "not authorized" instead of returning a database error the page would
  * have to translate.
  *
  * `reviewed_by` is the caller from the session, never a value from the form.
  * The time is set here rather than defaulted in Postgres so the audit row and
- * the status change are unambiguously the same write.
- *
- * Documents are not touched. The admin approves the caregiver; per-document
- * review stays unused.
+ * the decision are unambiguously the same write.
  */
-export async function setVerificationStatusAction(
+export async function reviewDocumentAction(
   _previous: ReviewState,
   formData: FormData,
 ): Promise<ReviewState> {
   const parsed = schema.safeParse({
-    caregiverId: formData.get("caregiverId"),
+    documentId: formData.get("documentId"),
     status: formData.get("status"),
   });
 
@@ -52,28 +57,27 @@ export async function setVerificationStatusAction(
   const { data: claims } = await supabase.auth.getClaims();
   const reviewer = claims?.claims?.sub;
 
-  const { error, count } = await supabase
-    .from("caregivers")
-    .update(
-      {
-        verification_status: parsed.data.status,
-        reviewed_by: reviewer ?? null,
-        reviewed_at: new Date().toISOString(),
-      },
-      { count: "exact" },
-    )
-    .eq("user_id", parsed.data.caregiverId);
+  const { data, error } = await supabase
+    .from("caregiver_documents")
+    .update({
+      review_status: parsed.data.status,
+      reviewed_by: reviewer ?? null,
+      reviewed_at: new Date().toISOString(),
+    })
+    .eq("id", parsed.data.documentId)
+    .select("caregiver_id")
+    .maybeSingle();
 
   if (error) {
     return { error: error.message };
   }
 
-  if (count === 0) {
-    return { error: "That caregiver no longer exists." };
+  if (!data) {
+    return { error: "That document no longer exists." };
   }
 
   revalidatePath("/admin/caregiver");
-  revalidatePath(`/admin/caregiver/${parsed.data.caregiverId}`);
+  revalidatePath(`/admin/caregiver/${data.caregiver_id}`);
   revalidatePath("/me");
 
   return { ok: true };

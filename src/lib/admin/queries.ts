@@ -52,11 +52,16 @@ export type CaregiverDetail = {
   email: string;
   bio: string | null;
   avatar_path: string | null;
+  /** Derived from the documents by the database, never stored. */
   verification_status: string;
+  date_of_birth: string | null;
+  gender: string | null;
+  age_min: number | null;
+  age_max: number | null;
   submitted_at: string | null;
-  reviewed_by: string | null;
-  reviewed_at: string | null;
   created_at: string;
+  need_slugs: string[];
+  support_slugs: string[];
 };
 
 export function parseStatus(value: string | string[] | undefined): StatusBucket {
@@ -132,7 +137,7 @@ export async function getCaregiverForReview(
   supabase: SupabaseClient<Database>,
   userId: string,
 ) {
-  const [detail, contacts, documents, availability] = await Promise.all([
+  const [detail, contacts, documents, availability, needs, supports] = await Promise.all([
     supabase.rpc("admin_caregiver_detail", { p_user_id: userId }),
     supabase.from("contacts").select("*").eq("user_id", userId).order("created_at"),
     supabase
@@ -146,6 +151,8 @@ export async function getCaregiverForReview(
       .eq("caregiver_id", userId)
       .order("day_of_week")
       .order("start_time"),
+    supabase.from("needs").select("slug, label, position").order("position"),
+    supabase.from("supports").select("slug, label, position").order("position"),
   ]);
 
   if (detail.error) throw new Error(`Could not load the caregiver: ${detail.error.message}`);
@@ -169,5 +176,7 @@ export async function getCaregiverForReview(
     contacts: contacts.data ?? [],
     documents: signed,
     availability: availability.data ?? [],
+    needs: needs.data ?? [],
+    supports: supports.data ?? [],
   };
 }

@@ -6,13 +6,22 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { cn } from "cn";
 
-import { ReviewActions } from "@/components/admin/review-actions";
+import { DocumentReview } from "@/components/admin/document-review";
 import { StatusBadge } from "@/components/admin/status-badge";
+import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { formatDate, formatTime } from "@/lib/admin/format";
 import { getCaregiverForReview } from "@/lib/admin/queries";
+import { formatAge } from "@/lib/age";
 import { DAYS } from "@/lib/caregiver/availability";
+import { genderLabel } from "@/lib/caregiver/capabilities";
 import { completeness } from "@/lib/caregiver/completeness";
+import {
+  credentialLabel,
+  credentialState,
+  formatExpiry,
+  kindLabel,
+} from "@/lib/caregiver/credentials";
 import { env } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 
@@ -23,23 +32,17 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const DOCUMENT_KINDS: Record<string, string> = {
-  background_check: "Background check",
-  certification: "Certification",
-  other: "Other",
-};
-
 /**
  * One caregiver, read before a decision.
  *
- * The screen is ordered the way the decision is made: who they are and what they
- * put on their profile, how to reach them, the document the review is about,
- * then what they can work. Approve and Reject sit at the top because they are
- * the reason the page exists; the rest is evidence.
+ * There is no Approve or Reject button for the person. The decision is per
+ * document, and the badge at the top is calculated from those decisions — so the
+ * screen shows the evidence with its own controls rather than a summary that
+ * could contradict them.
  *
- * The background check is opened through a signed URL generated here, on the
- * server, for an hour. It is a new tab rather than an inline viewer because a
- * PDF and an image need different viewers, and the browser already has both.
+ * Documents are opened through a signed URL generated here, on the server, for an
+ * hour. It is a new tab rather than an inline viewer because a PDF and an image
+ * need different viewers, and the browser already has both.
  */
 export default async function AdminCaregiverPage(
   props: PageProps<"/admin/caregiver/[id]">,
@@ -54,15 +57,19 @@ export default async function AdminCaregiverPage(
     notFound();
   }
 
-  const { caregiver, contacts, documents, availability } = review;
+  const { caregiver, contacts, documents, availability, needs, supports } = review;
 
   const items = completeness({
     displayName: caregiver.display_name,
     bio: caregiver.bio,
     avatarPath: caregiver.avatar_path,
+    dateOfBirth: caregiver.date_of_birth,
+    gender: caregiver.gender,
+    workingAges: caregiver.age_min !== null && caregiver.age_max !== null,
     contactCount: contacts.length,
-    backgroundCheckCount: documents.filter((document) => document.kind === "background_check")
-      .length,
+    needCount: caregiver.need_slugs.length,
+    supportCount: caregiver.support_slugs.length,
+    documentCount: documents.length,
     availabilityCount: availability.length,
   });
 
@@ -73,6 +80,20 @@ export default async function AdminCaregiverPage(
     : null;
 
   const name = caregiver.display_name || "No name yet";
+
+  const caps = [
+    caregiver.date_of_birth ? formatAge(caregiver.date_of_birth) : null,
+    genderLabel(caregiver.gender),
+    caregiver.age_min !== null && caregiver.age_max !== null
+      ? `Works with ages ${caregiver.age_min}\u2013${caregiver.age_max}`
+      : null,
+    caregiver.date_of_birth ? `Born ${formatDate(caregiver.date_of_birth)}` : null,
+  ].filter((fact): fact is string => Boolean(fact));
+
+  const needLabels = needs.filter((need) => caregiver.need_slugs.includes(need.slug));
+  const supportLabels = supports.filter((support) =>
+    caregiver.support_slugs.includes(support.slug),
+  );
 
   return (
     <div className="flex max-w-3xl flex-col gap-12">
@@ -118,16 +139,20 @@ export default async function AdminCaregiverPage(
               </div>
             </div>
           </div>
-
-          <ReviewActions
-            caregiverId={caregiver.user_id}
-            status={caregiver.verification_status}
-          />
         </div>
 
-        {caregiver.reviewed_at ? (
-          <p className="text-sm text-muted-foreground">
-            Last decided {formatDate(caregiver.reviewed_at)}.
+        {caps.length > 0 ? (
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+            {caps.map((fact, index) => (
+              <span key={fact} className="flex items-center gap-2">
+                {index > 0 ? (
+                  <span aria-hidden className="text-border">
+                    &middot;
+                  </span>
+                ) : null}
+                {fact}
+              </span>
+            ))}
           </p>
         ) : null}
       </div>
@@ -163,6 +188,44 @@ export default async function AdminCaregiverPage(
         </div>
       </section>
 
+      <section className="flex flex-col gap-6">
+        <h2 className="font-heading text-lg font-medium tracking-tight">
+          What they can support
+        </h2>
+
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <p className="text-xs font-medium text-muted-foreground">Needs</p>
+            {needLabels.length === 0 ? (
+              <p className="text-sm text-muted-foreground">None ticked.</p>
+            ) : (
+              <div className="flex flex-wrap gap-1.5">
+                {needLabels.map((need) => (
+                  <Badge key={need.slug} variant="secondary">
+                    {need.label}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <p className="text-xs font-medium text-muted-foreground">Supports</p>
+            {supportLabels.length === 0 ? (
+              <p className="text-sm text-muted-foreground">None ticked.</p>
+            ) : (
+              <div className="flex flex-wrap gap-1.5">
+                {supportLabels.map((support) => (
+                  <Badge key={support.slug} variant="outline">
+                    {support.label}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       <section className="flex flex-col gap-4">
         <h2 className="font-heading text-lg font-medium tracking-tight">Contact details</h2>
 
@@ -192,46 +255,79 @@ export default async function AdminCaregiverPage(
       </section>
 
       <section className="flex flex-col gap-4">
-        <h2 className="font-heading text-lg font-medium tracking-tight">Documents</h2>
+        <h2 className="font-heading text-lg font-medium tracking-tight">Credentials</h2>
 
         {documents.length === 0 ? (
           <p className="text-muted-foreground">
-            Nothing uploaded yet. The background check is what the review is for.
+            Nothing uploaded yet. A background check is where the review usually
+            starts.
           </p>
         ) : (
           <ul className="flex flex-col">
-            {documents.map((document) => (
-              <li
-                key={document.id}
-                className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3 last:border-b-0"
-              >
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">
-                    {document.file_name ?? "Document"}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {DOCUMENT_KINDS[document.kind] ?? document.kind}
-                    {formatDate(document.created_at)
-                      ? ` · ${formatDate(document.created_at)}`
-                      : ""}
-                  </p>
-                </div>
+            {documents.map((document) => {
+              const state = credentialState(document);
 
-                {document.url ? (
-                  <a
-                    href={document.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={cn(buttonVariants({ variant: "outline", size: "sm" }), "gap-1.5")}
-                  >
-                    Open
-                    <ExternalLinkIcon className="size-3.5" />
-                  </a>
-                ) : (
-                  <span className="text-xs text-muted-foreground">Link unavailable</span>
-                )}
-              </li>
-            ))}
+              return (
+                <li
+                  key={document.id}
+                  className="flex flex-wrap items-start justify-between gap-4 border-b border-border py-4 first:pt-0 last:border-b-0 last:pb-0"
+                >
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-sm font-medium">{kindLabel(document.kind)}</p>
+                      <Badge
+                        variant={
+                          state === "approved"
+                            ? "success"
+                            : state === "rejected"
+                              ? "destructive"
+                              : "warning"
+                        }
+                      >
+                        {credentialLabel(state)}
+                      </Badge>
+                    </div>
+
+                    <p className="truncate text-sm text-muted-foreground">
+                      {document.file_name ?? "Document"}
+                    </p>
+
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {document.expires_at
+                        ? `Expires ${formatExpiry(document.expires_at)}`
+                        : "No expiry date"}
+                      {document.reviewed_at
+                        ? ` · decided ${formatDate(document.reviewed_at)}`
+                        : ""}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    {document.url ? (
+                      <a
+                        href={document.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={cn(
+                          buttonVariants({ variant: "outline", size: "sm" }),
+                          "gap-1.5",
+                        )}
+                      >
+                        Open
+                        <ExternalLinkIcon className="size-3.5" />
+                      </a>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">Link unavailable</span>
+                    )}
+
+                    <DocumentReview
+                      documentId={document.id}
+                      status={document.review_status}
+                    />
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>

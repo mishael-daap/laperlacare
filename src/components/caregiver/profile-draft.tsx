@@ -13,12 +13,12 @@ import {
 import type { AvailabilityBlock } from "@/lib/caregiver/actions";
 import {
   saveAvailabilityAction,
+  saveCapabilitiesAction,
   saveContactsAction,
-  saveDocumentAction,
   saveProfileAction,
 } from "@/lib/caregiver/actions";
 import { blocksToCells, cellsToBlocks } from "@/lib/caregiver/availability";
-import { uploadAvatar, uploadCaregiverDocument } from "@/lib/caregiver/storage";
+import { uploadAvatar } from "@/lib/caregiver/storage";
 
 export type DraftContact = {
   /** Absent until it has been saved once. */
@@ -42,7 +42,8 @@ type Draft = {
    *
    * Availability is the exception and stays live — it is the one thing people
    * genuinely adjust often, and burying it behind a mode would be a tax on the
-   * common case.
+   * common case. Credentials are the other: uploading a document is a thing
+   * somebody does the moment they have it in their hand.
    */
   profileEditing: boolean;
   setProfileEditing: (value: boolean) => void;
@@ -55,15 +56,25 @@ type Draft = {
   preview: string | null;
   setPhoto: (file: File) => void;
 
+  /** Empty string means "not answered", which is a valid state for both. */
+  dateOfBirth: string;
+  setDateOfBirth: (value: string) => void;
+  gender: string;
+  setGender: (value: string) => void;
+
+  /** Held as strings because that is what an input hands over. */
+  workingAges: { min: string; max: string };
+  setWorkingAges: (value: { min: string; max: string }) => void;
+
+  needSlugs: Set<string>;
+  toggleNeed: (slug: string) => void;
+  supportSlugs: Set<string>;
+  toggleSupport: (slug: string) => void;
+
   contacts: DraftContact[];
   addContact: () => void;
   updateContact: (index: number, patch: Partial<DraftContact>) => void;
   removeContact: (index: number) => void;
-
-  documents: { id: string; kind: string; fileName: string | null }[];
-  documentFile: File | null;
-  documentName: string | null;
-  setDocumentFile: (file: File) => void;
 
   cells: Set<string>;
   toggleCell: (day: number, hour: number) => void;
@@ -87,7 +98,7 @@ export function useProfileDraft() {
   return draft;
 }
 
-function sameCells(a: Set<string>, b: Set<string>) {
+function sameSet(a: Set<string>, b: Set<string>) {
   if (a.size !== b.size) return false;
   for (const value of a) if (!b.has(value)) return false;
   return true;
@@ -109,6 +120,18 @@ function sameContacts(a: DraftContact[], b: DraftContact[]) {
   });
 }
 
+type Baseline = {
+  name: string;
+  bio: string;
+  dateOfBirth: string;
+  gender: string;
+  workingAges: { min: string; max: string };
+  needSlugs: Set<string>;
+  supportSlugs: Set<string>;
+  contacts: DraftContact[];
+  cells: Set<string>;
+};
+
 /**
  * Holds everything on the profile that can be edited, so one save bar can commit
  * all of it.
@@ -117,21 +140,35 @@ function sameContacts(a: DraftContact[], b: DraftContact[]) {
  * `isDirty` flag somebody has to remember to set. It also means saving needs no
  * cleanup: once the server has the new values, the comparison goes false on its
  * own.
+ *
+ * Credentials are deliberately absent. A document is uploaded the moment it is
+ * chosen and reviewed on its own, so holding it in a draft would only postpone
+ * the review.
  */
 export function ProfileDraftProvider({
   userId,
   initialName,
   initialBio,
+  initialDateOfBirth,
+  initialGender,
+  initialAgeMin,
+  initialAgeMax,
+  initialNeedSlugs,
+  initialSupportSlugs,
   initialContacts,
-  initialDocuments,
   initialBlocks,
   children,
 }: {
   userId: string;
   initialName: string | null;
   initialBio: string | null;
+  initialDateOfBirth: string | null;
+  initialGender: string | null;
+  initialAgeMin: number | null;
+  initialAgeMax: number | null;
+  initialNeedSlugs: string[];
+  initialSupportSlugs: string[];
   initialContacts: DraftContact[];
-  initialDocuments: { id: string; kind: string; fileName: string | null }[];
   /**
    * Blocks rather than a Set. A Set cannot cross the server-to-client boundary,
    * and building it here keeps the conversion in one place.
@@ -145,8 +182,19 @@ export function ProfileDraftProvider({
   const [bio, setBio] = useState(initialBio ?? "");
   const [photo, setPhotoState] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [dateOfBirth, setDateOfBirth] = useState(initialDateOfBirth ?? "");
+  const [gender, setGender] = useState(initialGender ?? "");
+  const [workingAges, setWorkingAges] = useState({
+    min: initialAgeMin === null ? "" : String(initialAgeMin),
+    max: initialAgeMax === null ? "" : String(initialAgeMax),
+  });
+  const [needSlugs, setNeedSlugs] = useState<Set<string>>(
+    () => new Set(initialNeedSlugs),
+  );
+  const [supportSlugs, setSupportSlugs] = useState<Set<string>>(
+    () => new Set(initialSupportSlugs),
+  );
   const [contacts, setContacts] = useState<DraftContact[]>(initialContacts);
-  const [documentFile, setDocumentFileState] = useState<File | null>(null);
   const [cells, setCells] = useState<Set<string>>(() => blocksToCells(initialBlocks));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -164,29 +212,37 @@ export function ProfileDraftProvider({
    * and would fight with what the caregiver is doing. The only thing that moves
    * this is a save that succeeded.
    */
-  const [baseline, setBaseline] = useState(() => ({
+  const [baseline, setBaseline] = useState<Baseline>(() => ({
     name: initialName ?? "",
     bio: initialBio ?? "",
+    dateOfBirth: initialDateOfBirth ?? "",
+    gender: initialGender ?? "",
+    workingAges: {
+      min: initialAgeMin === null ? "" : String(initialAgeMin),
+      max: initialAgeMax === null ? "" : String(initialAgeMax),
+    },
+    needSlugs: new Set(initialNeedSlugs),
+    supportSlugs: new Set(initialSupportSlugs),
     contacts: initialContacts,
     cells: blocksToCells(initialBlocks),
   }));
 
   const dirty =
     photo !== null ||
-    documentFile !== null ||
     name !== baseline.name ||
     bio !== baseline.bio ||
+    dateOfBirth !== baseline.dateOfBirth ||
+    gender !== baseline.gender ||
+    workingAges.min !== baseline.workingAges.min ||
+    workingAges.max !== baseline.workingAges.max ||
+    !sameSet(needSlugs, baseline.needSlugs) ||
+    !sameSet(supportSlugs, baseline.supportSlugs) ||
     !sameContacts(contacts, baseline.contacts) ||
-    !sameCells(cells, baseline.cells);
+    !sameSet(cells, baseline.cells);
 
   const setPhoto = useCallback((file: File) => {
     setPhotoState(file);
     setPreview(URL.createObjectURL(file));
-    setError(null);
-  }, []);
-
-  const setDocumentFile = useCallback((file: File) => {
-    setDocumentFileState(file);
     setError(null);
   }, []);
 
@@ -210,25 +266,33 @@ export function ProfileDraftProvider({
     setError(null);
   }, []);
 
+  const toggleNeed = useCallback((slug: string) => {
+    setNeedSlugs((current) => toggle(current, slug));
+    setError(null);
+  }, []);
+
+  const toggleSupport = useCallback((slug: string) => {
+    setSupportSlugs((current) => toggle(current, slug));
+    setError(null);
+  }, []);
+
   const toggleCell = useCallback((day: number, hour: number) => {
-    setCells((current) => {
-      const next = new Set(current);
-      const key = `${day}-${hour}`;
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
+    setCells((current) => toggle(current, `${day}-${hour}`));
     setError(null);
   }, []);
 
   const cancel = useCallback(() => {
     setName(baseline.name);
     setBio(baseline.bio);
+    setDateOfBirth(baseline.dateOfBirth);
+    setGender(baseline.gender);
+    setWorkingAges(baseline.workingAges);
+    setNeedSlugs(new Set(baseline.needSlugs));
+    setSupportSlugs(new Set(baseline.supportSlugs));
     setPhotoState(null);
     setPreview(null);
     setContacts(baseline.contacts);
-    setDocumentFileState(null);
-    setCells(baseline.cells);
+    setCells(new Set(baseline.cells));
     setError(null);
   }, [baseline]);
 
@@ -238,10 +302,17 @@ export function ProfileDraftProvider({
     // anything about your name.
     const profileChanged =
       photo !== null || name !== baseline.name || bio !== baseline.bio;
+    const capabilitiesChanged =
+      dateOfBirth !== baseline.dateOfBirth ||
+      gender !== baseline.gender ||
+      workingAges.min !== baseline.workingAges.min ||
+      workingAges.max !== baseline.workingAges.max ||
+      !sameSet(needSlugs, baseline.needSlugs) ||
+      !sameSet(supportSlugs, baseline.supportSlugs);
     const contactsChanged = !sameContacts(contacts, baseline.contacts);
-    const availabilityChanged = !sameCells(cells, baseline.cells);
+    const availabilityChanged = !sameSet(cells, baseline.cells);
 
-    if (!profileChanged && !contactsChanged && !availabilityChanged && !documentFile) {
+    if (!profileChanged && !capabilitiesChanged && !contactsChanged && !availabilityChanged) {
       return;
     }
 
@@ -250,24 +321,23 @@ export function ProfileDraftProvider({
 
     try {
       // Uploads first, then writes. A failed upload leaves an orphaned file,
-      // which is harmless; the reverse would leave a broken image or a document
-      // row pointing at nothing.
+      // which is harmless; the reverse would leave a broken image.
       const avatarPath = photo ? await uploadAvatar(userId, photo) : undefined;
-      const documentPath = documentFile
-        ? await uploadCaregiverDocument(userId, documentFile)
-        : null;
 
       const results = await Promise.all([
         profileChanged ? saveProfileAction({ name, bio, avatarPath }) : null,
-        contactsChanged ? saveContactsAction(contacts) : null,
-        availabilityChanged ? saveAvailabilityAction(cellsToBlocks(cells)) : null,
-        documentPath
-          ? saveDocumentAction({
-              kind: "background_check",
-              storagePath: documentPath,
-              fileName: documentFile?.name ?? "document",
+        capabilitiesChanged
+          ? saveCapabilitiesAction({
+              needSlugs: [...needSlugs],
+              supportSlugs: [...supportSlugs],
+              dateOfBirth,
+              gender,
+              ageMin: workingAges.min,
+              ageMax: workingAges.max,
             })
           : null,
+        contactsChanged ? saveContactsAction(contacts) : null,
+        availabilityChanged ? saveAvailabilityAction(cellsToBlocks(cells)) : null,
       ]);
 
       const failure = results.find((result) => result?.error)?.error;
@@ -279,17 +349,40 @@ export function ProfileDraftProvider({
 
       // Move the baseline first, so the bar slides away on this frame. Then
       // refresh, which re-renders the page with the server's own copy.
-      setBaseline({ name, bio, contacts, cells });
+      setBaseline({
+        name,
+        bio,
+        dateOfBirth,
+        gender,
+        workingAges,
+        needSlugs: new Set(needSlugs),
+        supportSlugs: new Set(supportSlugs),
+        contacts,
+        cells,
+      });
       setPhotoState(null);
       setPreview(null);
-      setDocumentFileState(null);
       router.refresh();
     } catch (uploadError) {
       setError(uploadError instanceof Error ? uploadError.message : "Save failed.");
     } finally {
       setSaving(false);
     }
-  }, [userId, photo, name, bio, contacts, documentFile, cells, router, baseline]);
+  }, [
+    userId,
+    photo,
+    name,
+    bio,
+    dateOfBirth,
+    gender,
+    workingAges,
+    needSlugs,
+    supportSlugs,
+    contacts,
+    cells,
+    router,
+    baseline,
+  ]);
 
   const value = useMemo<Draft>(
     () => ({
@@ -303,14 +396,20 @@ export function ProfileDraftProvider({
       photo,
       preview,
       setPhoto,
+      dateOfBirth,
+      setDateOfBirth,
+      gender,
+      setGender,
+      workingAges,
+      setWorkingAges,
+      needSlugs,
+      toggleNeed,
+      supportSlugs,
+      toggleSupport,
       contacts,
       addContact,
       updateContact,
       removeContact,
-      documents: initialDocuments,
-      documentFile,
-      documentName: documentFile?.name ?? null,
-      setDocumentFile,
       cells,
       toggleCell,
       dirty,
@@ -327,13 +426,17 @@ export function ProfileDraftProvider({
       photo,
       preview,
       setPhoto,
+      dateOfBirth,
+      gender,
+      workingAges,
+      needSlugs,
+      toggleNeed,
+      supportSlugs,
+      toggleSupport,
       contacts,
       addContact,
       updateContact,
       removeContact,
-      initialDocuments,
-      documentFile,
-      setDocumentFile,
       cells,
       toggleCell,
       dirty,
@@ -349,4 +452,11 @@ export function ProfileDraftProvider({
       {children}
     </ProfileDraftContext.Provider>
   );
+}
+
+function toggle(current: Set<string>, value: string) {
+  const next = new Set(current);
+  if (next.has(value)) next.delete(value);
+  else next.add(value);
+  return next;
 }

@@ -3,12 +3,14 @@ import { redirect } from "next/navigation";
 import { connection } from "next/server";
 
 import { AvailabilityBoard } from "@/components/caregiver/availability-board";
+import { CapabilityChecklist } from "@/components/caregiver/capability-checklist";
 import { ContactsSection } from "@/components/caregiver/contacts-section";
-import { DocumentsSection } from "@/components/caregiver/documents-section";
+import { CredentialsSection } from "@/components/caregiver/credentials-section";
 import { ProfileDraftProvider } from "@/components/caregiver/profile-draft";
 import { ProfileHeader } from "@/components/caregiver/profile-header";
 import { SaveBar } from "@/components/caregiver/save-bar";
 import { completeness, completenessSummary } from "@/lib/caregiver/completeness";
+import { statusSentence } from "@/lib/caregiver/credentials";
 import { getCaregiverProfile } from "@/lib/caregiver/get-caregiver-profile";
 import { env } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
@@ -29,9 +31,10 @@ export const instant = false;
  * the catalogue, because there is no parent profile and inventing an empty one
  * would be a screen that exists only to say it is empty.
  *
- * Everything editable lives on this page now — the onboarding dialog is gone.
- * It existed to walk somebody through a form they can see in front of them, and
- * it turned every small edit into a three-step ritual.
+ * The order is the order a caregiver builds the profile in: what has been
+ * verified, what they can take on, when they are free, how to reach them. A
+ * badge that says "pending" is answered by the credentials section immediately
+ * below it rather than after three more screens of scrolling.
  *
  * The header is full-bleed so the cover can sit inset from the screen edge.
  * Everything below shares its left edge, which is why the container is not
@@ -54,18 +57,24 @@ export default async function MePage() {
     redirect("/caregivers");
   }
 
-  const { caregiver, contacts, documents, availability } = profile;
+  const { caregiver, contacts, documents, availability, needs, supports, status } = profile;
 
   const items = completeness({
     displayName: caregiver.display_name,
     bio: caregiver.bio,
     avatarPath: caregiver.avatar_path,
+    dateOfBirth: caregiver.date_of_birth,
+    gender: caregiver.gender,
+    workingAges: caregiver.age_min !== null && caregiver.age_max !== null,
     contactCount: contacts.length,
-    backgroundCheckCount: documents.filter((d) => d.kind === "background_check").length,
+    needCount: profile.needSlugs.length,
+    supportCount: profile.supportSlugs.length,
+    documentCount: documents.length,
     availabilityCount: availability.length,
   });
 
   const summary = completenessSummary(items);
+  const sentence = statusSentence(status, documents);
 
   // Built by hand rather than through the storage client, which is browser-side.
   // The bucket is public, so the object is readable at a fixed URL.
@@ -81,25 +90,24 @@ export default async function MePage() {
     address: contact.address ?? "",
   }));
 
-  const initialDocuments = documents.map((document) => ({
-    id: document.id,
-    kind: document.kind,
-    fileName: document.file_name,
-  }));
-
   return (
     <ProfileDraftProvider
       userId={userId}
       initialName={caregiver.display_name}
       initialBio={caregiver.bio}
+      initialDateOfBirth={caregiver.date_of_birth}
+      initialGender={caregiver.gender}
+      initialAgeMin={caregiver.age_min}
+      initialAgeMax={caregiver.age_max}
+      initialNeedSlugs={profile.needSlugs}
+      initialSupportSlugs={profile.supportSlugs}
       initialContacts={initialContacts}
-      initialDocuments={initialDocuments}
       initialBlocks={availability}
     >
       <main className="flex-1">
         <ProfileHeader
           avatarSrc={avatarSrc}
-          status={caregiver.verification_status}
+          status={status}
           done={summary.done}
           total={summary.total}
         />
@@ -109,6 +117,26 @@ export default async function MePage() {
             the container's top padding makes the space after the bio match the space
             between everything below it. */}
         <div className="flex max-w-3xl flex-col gap-16 px-7 pt-8 pb-12 md:px-10">
+          {sentence ? (
+            <p className="-mb-8 text-pretty text-sm text-muted-foreground">{sentence}</p>
+          ) : null}
+
+          <CredentialsSection documents={documents} />
+
+          <CapabilityChecklist
+            kind="needs"
+            items={needs}
+            title="Children you can support"
+            description="The same list families tick for their child. Tick what you can take on — anything you leave blank will not be matched to you."
+          />
+
+          <CapabilityChecklist
+            kind="supports"
+            items={supports}
+            title="What you can provide"
+            description="The practical things you are willing to do on a shift."
+          />
+
           <section className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <h2 className="font-heading text-xl font-medium tracking-tight">
@@ -129,14 +157,6 @@ export default async function MePage() {
             </h2>
             <ContactsSection />
           </section>
-
-          <section className="flex flex-col gap-6">
-            <h2 className="font-heading text-xl font-medium tracking-tight">
-              Your background check
-            </h2>
-            <DocumentsSection />
-          </section>
-
         </div>
       </main>
 

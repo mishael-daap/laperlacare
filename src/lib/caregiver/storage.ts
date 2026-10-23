@@ -29,10 +29,12 @@ export async function uploadAvatar(userId: string, file: File) {
  * Documents go to a private bucket, so there is no URL to store — only the path.
  * Reading one back needs a signed URL, generated on the server at render time.
  */
-export async function uploadCaregiverDocument(userId: string, file: File) {
+export async function uploadCaregiverDocument(userId: string, file: File, kind: string) {
   const supabase = createClient();
   const extension = file.name.split(".").pop()?.toLowerCase() ?? "pdf";
-  const path = `${userId}/background-check-${Date.now()}.${extension}`;
+  // The kind is in the path so a folder of uploads is readable at a glance, and
+  // the timestamp keeps a replacement from being served from cache.
+  const path = `${userId}/${kind}-${Date.now()}.${extension}`;
 
   const { error } = await supabase.storage
     .from("caregiver-documents")

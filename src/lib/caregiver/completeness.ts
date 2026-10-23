@@ -14,13 +14,29 @@ export type CompletenessInput = {
   displayName: string | null;
   bio: string | null;
   avatarPath: string | null;
+  dateOfBirth: string | null;
+  gender: string | null;
+  /** A working age range is either both bounds or neither. */
+  workingAges: boolean;
   contactCount: number;
-  backgroundCheckCount: number;
+  needCount: number;
+  supportCount: number;
+  documentCount: number;
   availabilityCount: number;
 };
 
 export type CompletenessItem = {
-  key: "contacts" | "profile" | "avatar" | "backgroundCheck" | "availability";
+  key:
+    | "contacts"
+    | "profile"
+    | "avatar"
+    | "dateOfBirth"
+    | "gender"
+    | "workingAges"
+    | "needs"
+    | "supports"
+    | "documents"
+    | "availability";
   label: string;
   done: boolean;
 };
@@ -43,9 +59,34 @@ export function completeness(input: CompletenessInput): CompletenessItem[] {
       done: Boolean(input.avatarPath),
     },
     {
-      key: "backgroundCheck",
-      label: "Upload your background check",
-      done: input.backgroundCheckCount > 0,
+      key: "dateOfBirth",
+      label: "Add your date of birth",
+      done: Boolean(input.dateOfBirth),
+    },
+    {
+      key: "gender",
+      label: "Say which families you are a fit for",
+      done: Boolean(input.gender),
+    },
+    {
+      key: "workingAges",
+      label: "Choose the ages you work with",
+      done: input.workingAges,
+    },
+    {
+      key: "needs",
+      label: "Tick the needs you can support",
+      done: input.needCount > 0,
+    },
+    {
+      key: "supports",
+      label: "Tick what you can provide",
+      done: input.supportCount > 0,
+    },
+    {
+      key: "documents",
+      label: "Upload a document for review",
+      done: input.documentCount > 0,
     },
     {
       key: "availability",

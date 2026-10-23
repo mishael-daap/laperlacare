@@ -16,7 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { deleteChildAction } from "@/lib/household/actions";
-import { formatAge } from "@/lib/household/age";
+import { formatAge } from "@/lib/age";
 import type { HouseholdChild, HouseholdList } from "@/lib/household/get-household-profile";
 
 type ChildCardProps = {

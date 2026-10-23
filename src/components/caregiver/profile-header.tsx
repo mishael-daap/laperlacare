@@ -1,14 +1,23 @@
 "use client";
 
-import { PencilIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon, PencilIcon } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 
 import { useProfileDraft } from "@/components/caregiver/profile-draft";
 import { VerificationStatus } from "@/components/caregiver/verification-status";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { formatAge } from "@/lib/age";
+import { GENDERS, genderLabel, MAX_AGE, MIN_AGE } from "@/lib/caregiver/capabilities";
 
 /**
  * The top of the profile: the cloud photograph, the avatar overlapping its
@@ -38,7 +47,6 @@ export function ProfileHeader({
 }) {
   const { name, setName, bio, setBio, preview, setPhoto, profileEditing, setProfileEditing } =
     useProfileDraft();
-
   const fileInput = useRef<HTMLInputElement>(null);
   const [editing, setEditing] = useState<"name" | "bio" | null>(null);
 
@@ -192,9 +200,152 @@ export function ProfileHeader({
                 </p>
               )}
             </div>
+
+            {/* The facts a family filters by. Read-only here, editable with the
+                rest of the profile, and silent when none of them is set — an
+                empty line of dots would be worse than nothing. */}
+            <ProfileFacts />
         </div>
       </div>
     </header>
+  );
+}
+
+/** The browser's date input wants YYYY-MM-DD in the viewer's own calendar. */
+function today() {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+
+  return `${now.getFullYear()}-${month}-${day}`;
+}
+
+/**
+ * Date of birth, gender, and the ages this caregiver works with.
+ *
+ * They sit with the name and bio rather than in a section of their own because
+ * they are the same kind of statement — who this person is and who they can take
+ * on — and a family reads all of it in one glance.
+ *
+ * The date of birth is shown as an age. The date itself is a stronger identifier
+ * than the age and nothing on this page needs it.
+ */
+function ProfileFacts() {
+  const {
+    profileEditing,
+    dateOfBirth,
+    setDateOfBirth,
+    gender,
+    setGender,
+    workingAges,
+    setWorkingAges,
+  } = useProfileDraft();
+
+  if (profileEditing) {
+    return (
+      <div className="mt-5 grid max-w-lg gap-3 sm:grid-cols-2">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="caregiver-dob" className="text-xs text-muted-foreground">
+            Date of birth
+          </Label>
+          <Input
+            id="caregiver-dob"
+            type="date"
+            max={today()}
+            value={dateOfBirth}
+            onChange={(event) => setDateOfBirth(event.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs text-muted-foreground">Gender</span>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button type="button" variant="outline" className="w-full justify-between" />
+              }
+            >
+              {genderLabel(gender) ?? "Not set"}
+              <ChevronDownIcon />
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent>
+              {GENDERS.map((option) => (
+                <DropdownMenuItem key={option.value} onClick={() => setGender(option.value)}>
+                  {option.label}
+                  {gender === option.value ? <CheckIcon className="ml-auto" /> : null}
+                </DropdownMenuItem>
+              ))}
+              <DropdownMenuItem onClick={() => setGender("")}>
+                Not set
+                {gender === "" ? <CheckIcon className="ml-auto" /> : null}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        <div className="flex flex-col gap-1.5 sm:col-span-2">
+          <span className="text-xs text-muted-foreground">Ages you work with</span>
+          <div className="flex items-center gap-2">
+            <Input
+              type="number"
+              inputMode="numeric"
+              min={MIN_AGE}
+              max={MAX_AGE}
+              aria-label="Youngest age"
+              placeholder="2"
+              className="w-24"
+              value={workingAges.min}
+              onChange={(event) =>
+                setWorkingAges({ ...workingAges, min: event.target.value })
+              }
+            />
+            <span className="text-sm text-muted-foreground">to</span>
+            <Input
+              type="number"
+              inputMode="numeric"
+              min={MIN_AGE}
+              max={MAX_AGE}
+              aria-label="Oldest age"
+              placeholder="5"
+              className="w-24"
+              value={workingAges.max}
+              onChange={(event) =>
+                setWorkingAges({ ...workingAges, max: event.target.value })
+              }
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const ages =
+    workingAges.min !== "" && workingAges.max !== ""
+      ? `Ages ${workingAges.min}\u2013${workingAges.max}`
+      : null;
+
+  const facts = [
+    dateOfBirth ? formatAge(dateOfBirth) : null,
+    genderLabel(gender),
+    ages,
+  ].filter((fact): fact is string => Boolean(fact));
+
+  if (facts.length === 0) return null;
+
+  return (
+    <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+      {facts.map((fact, index) => (
+        <span key={fact} className="flex items-center gap-2">
+          {index > 0 ? (
+            <span aria-hidden className="text-border">
+              &middot;
+            </span>
+          ) : null}
+          {fact}
+        </span>
+      ))}
+    </p>
   );
 }
 
