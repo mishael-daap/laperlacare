@@ -1,14 +1,10 @@
-# Ideas
+# Brainstorm, 2026-10-20
 
-Brainstorm notes, captured before any decision is made. Nothing here is approved,
-scheduled, or specced. An idea graduates by being promoted to an item in
-`ai/roadmap.md`, at which point its own `ai/features/<name>/` folder takes over
-and the entry here points at it.
-
-Newest at the bottom. One entry per idea, dated, however rough.
+The first batch, moved out of the old single-file `ai/ideas.md`. Several of these
+have since graduated: needs and supports became roadmap 7.1 and 7.2, and
+per-document review shipped with 7.2.
 
 ---
-
 ## 2026-10-20 — Needs and supports checklist
 
 A fixed list of checkboxes, split into two kinds:

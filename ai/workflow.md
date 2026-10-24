@@ -13,6 +13,7 @@ This folder keeps you and the AI agent aligned. It is the single source of truth
 | `ai/architecture.md` | How the system is structured, and which decisions are settled. Written once in Phase 1. |
 | `ai/design.md` | How the interface should look and feel. Read before building any UI. |
 | `ai/roadmap.md` | The features, in order, with status. Updated throughout. |
+| `ai/ideas/` | Unapproved ideas and bugs found in testing, one file each. Read the `README.md` inside it. |
 | `ai/feature-template.md` | The skeleton used each time a feature's docs are created. |
 | `ai/features/<name>/spec.md` | What one feature does (behavior, rules, acceptance criteria). |
 | `ai/features/<name>/tech.md` | How it will be built (components, endpoints, data, flow). |
