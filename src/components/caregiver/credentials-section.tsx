@@ -22,6 +22,7 @@ import {
   EXPIRING_SOON_DAYS,
   formatExpiry,
   kindLabel,
+  shortFileName,
   type DocumentKind,
 } from "@/lib/caregiver/credentials";
 import type { CaregiverDocument } from "@/lib/caregiver/get-caregiver-profile";
@@ -92,15 +93,18 @@ export function CredentialsSection({ documents }: { documents: CaregiverDocument
                 key={document.id}
                 className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-4 first:pt-0 last:border-b-0 last:pb-0"
               >
-                <div className="flex min-w-0 items-start gap-3">
+                <div className="flex min-w-0 flex-1 items-start gap-3">
                   <FileTextIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
 
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">
                       {kindLabel(document.kind)}
                     </p>
-                    <p className="truncate text-sm text-muted-foreground">
-                      {document.file_name ?? "Document"}
+                    <p
+                      title={document.file_name ?? undefined}
+                      className="truncate text-sm text-muted-foreground"
+                    >
+                      {shortFileName(document.file_name ?? "Document")}
                     </p>
                     {document.expires_at ? (
                       <p className="mt-0.5 text-xs text-muted-foreground">

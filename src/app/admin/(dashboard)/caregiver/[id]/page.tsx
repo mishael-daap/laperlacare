@@ -21,6 +21,7 @@ import {
   credentialState,
   formatExpiry,
   kindLabel,
+  shortFileName,
 } from "@/lib/caregiver/credentials";
 import { env } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
@@ -272,7 +273,7 @@ export default async function AdminCaregiverPage(
                   key={document.id}
                   className="flex flex-wrap items-start justify-between gap-4 border-b border-border py-4 first:pt-0 last:border-b-0 last:pb-0"
                 >
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="text-sm font-medium">{kindLabel(document.kind)}</p>
                       <Badge
@@ -288,8 +289,11 @@ export default async function AdminCaregiverPage(
                       </Badge>
                     </div>
 
-                    <p className="truncate text-sm text-muted-foreground">
-                      {document.file_name ?? "Document"}
+                    <p
+                      title={document.file_name ?? undefined}
+                      className="truncate text-sm text-muted-foreground"
+                    >
+                      {shortFileName(document.file_name ?? "Document")}
                     </p>
 
                     <p className="mt-1 text-xs text-muted-foreground">

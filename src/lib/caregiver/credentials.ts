@@ -21,6 +21,28 @@ export function kindLabel(kind: string) {
   return DOCUMENT_KINDS.find((entry) => entry.value === kind)?.label ?? "Document";
 }
 
+/** Longest a file name renders before it is shortened. */
+export const FILE_NAME_MAX = 48;
+
+/**
+ * A scan name is not content.
+ *
+ * A 120-character scanner export pushes the status and the actions off the row,
+ * so the display is capped while the stored name (`caregiver_documents.file_name`)
+ * stays exactly as uploaded. The extension is kept because ".pdf" tells the
+ * reader more than the last three characters of a serial number do.
+ */
+export function shortFileName(name: string, max = FILE_NAME_MAX) {
+  if (name.length <= max) return name;
+
+  const dot = name.lastIndexOf(".");
+  const extension = dot > 0 && name.length - dot <= 10 ? name.slice(dot) : "";
+  const stem = extension ? name.slice(0, dot) : name;
+  const room = Math.max(1, max - extension.length - 1);
+
+  return `${stem.slice(0, room).trimEnd()}…${extension}`;
+}
+
 export type CredentialState = "pending" | "approved" | "rejected" | "expired";
 
 const isoDate = (date: Date) => date.toISOString().slice(0, 10);

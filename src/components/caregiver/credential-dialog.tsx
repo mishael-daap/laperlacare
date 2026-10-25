@@ -23,7 +23,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { addDocumentAction } from "@/lib/caregiver/actions";
-import { DOCUMENT_KINDS, kindLabel, type DocumentKind } from "@/lib/caregiver/credentials";
+import {
+  DOCUMENT_KINDS,
+  kindLabel,
+  shortFileName,
+  type DocumentKind,
+} from "@/lib/caregiver/credentials";
 import { uploadCaregiverDocument } from "@/lib/caregiver/storage";
 
 const MAX_BYTES = 5 * 1024 * 1024;
@@ -208,8 +213,16 @@ export function CredentialDialog({
                 <UploadIcon />
                 Choose file
               </Button>
-              <span className="min-w-0 truncate text-sm text-muted-foreground">
-                {fileName ?? "Image or PDF, up to 5 MB."}
+              {/*
+                Wraps rather than truncates: there is no column here to clip
+                into, and only part of a name is worse than two lines of it.
+                The cap keeps a scanner export from filling the dialog.
+              */}
+              <span
+                title={fileName ?? undefined}
+                className="min-w-0 flex-1 text-sm wrap-anywhere text-muted-foreground"
+              >
+                {fileName ? shortFileName(fileName, 80) : "Image or PDF, up to 5 MB."}
               </span>
             </div>
           </div>

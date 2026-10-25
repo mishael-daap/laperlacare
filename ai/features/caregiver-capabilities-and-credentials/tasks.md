@@ -16,6 +16,7 @@
 - [x] Show the computed status and the document sentence under the header, including the expiring-soon, expired, and rejected cases.
 - [x] Add `reviewDocumentAction` and `document-review.tsx`; remove the per-caregiver Approve and Reject buttons, and show needs, supports, age, gender, and working age range on the admin detail page.
 - [x] Walk the acceptance criteria, including the cross-account API checks and an expiry that has already passed, then run `pnpm lint`, `pnpm typecheck`, and `pnpm build`.
+- [x] Fix the credential file-name overflow: add `shortFileName` to `credentials.ts`, wrap the name in the dialog, and cap and truncate it in both credential lists.
 - [ ] Ask the user to validate before marking roadmap item 7.2 completed.
 
 Deferred:
