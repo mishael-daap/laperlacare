@@ -21,6 +21,7 @@ import {
   credentialState,
   formatExpiry,
   kindLabel,
+  rejectionReasonLabel,
   shortFileName,
 } from "@/lib/caregiver/credentials";
 import { env } from "@/lib/env";
@@ -58,7 +59,7 @@ export default async function AdminCaregiverPage(
     notFound();
   }
 
-  const { caregiver, contacts, documents, availability, needs, supports } = review;
+  const { caregiver, contacts, documents, history, availability, needs, supports } = review;
 
   const items = completeness({
     displayName: caregiver.display_name,
@@ -304,6 +305,19 @@ export default async function AdminCaregiverPage(
                         ? ` · decided ${formatDate(document.reviewed_at)}`
                         : ""}
                     </p>
+
+                    {document.rejection_reason ? (
+                      <div className="mt-2 rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm">
+                        <p className="font-medium">
+                          {rejectionReasonLabel(document.rejection_reason)}
+                        </p>
+                        {document.rejection_message ? (
+                          <p className="mt-1 whitespace-pre-line text-muted-foreground">
+                            {document.rejection_message}
+                          </p>
+                        ) : null}
+                      </div>
+                    ) : null}
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">
@@ -327,6 +341,7 @@ export default async function AdminCaregiverPage(
                     <DocumentReview
                       documentId={document.id}
                       status={document.review_status}
+                      kind={document.kind}
                     />
                   </div>
                 </li>
@@ -335,6 +350,56 @@ export default async function AdminCaregiverPage(
           </ul>
         )}
       </section>
+
+      {history.length > 0 ? (
+        <section className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <h2 className="font-heading text-lg font-medium tracking-tight">
+              Review history
+            </h2>
+            <p className="text-muted-foreground">
+              Every decision, including ones about files that have since been
+              replaced.
+            </p>
+          </div>
+
+          <ul className="flex flex-col">
+            {history.map((entry) => (
+              <li
+                key={entry.id}
+                className="flex flex-col gap-1 border-b border-border py-4 first:pt-0 last:border-b-0 last:pb-0"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-sm font-medium">{kindLabel(entry.kind)}</p>
+                  <Badge variant={entry.decision === "approved" ? "success" : "destructive"}>
+                    {entry.decision === "approved" ? "Approved" : "Rejected"}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">
+                    decided {formatDate(entry.reviewed_at)}
+                  </span>
+                </div>
+
+                <p
+                  title={entry.file_name ?? undefined}
+                  className="truncate text-xs text-muted-foreground"
+                >
+                  {shortFileName(entry.file_name ?? "Document")}
+                </p>
+
+                {entry.reason ? (
+                  <p className="text-sm">{rejectionReasonLabel(entry.reason)}</p>
+                ) : null}
+
+                {entry.message ? (
+                  <p className="whitespace-pre-line text-sm text-muted-foreground">
+                    {entry.message}
+                  </p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section className="flex flex-col gap-4">
         <h2 className="font-heading text-lg font-medium tracking-tight">

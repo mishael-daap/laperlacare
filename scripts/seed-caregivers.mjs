@@ -38,19 +38,56 @@ if (!URL_BASE || !PUBLISHABLE || !SECRET) {
 
 const PASSWORD = "SeedPass-2026!";
 const DOMAIN = "example.com";
+
+// One rejection per reason, so the four rejected rows do not all read the same.
+// The last one is "other", which is the reason that has to carry a message.
+const REJECTIONS = [
+  {
+    reason: "invalid_or_unreadable",
+    message: "The scan was too dark to read the issue date. A phone photo in daylight is fine.",
+  },
+  {
+    reason: "not_california",
+    message: "This is an out-of-state check. California requires Live Scan through the DOJ.",
+  },
+  { reason: "name_mismatch", message: null },
+  {
+    reason: "other",
+    message: "This is the certificate of completion for the course, not the CPR card itself.",
+  },
+];
 const ADMIN_EMAIL = `seed-admin@${DOMAIN}`;
 const MARKER = "seed-caregiver-";
 
-const rpc = (path, init = {}) =>
-  fetch(`${URL_BASE}${path}`, {
-    ...init,
-    headers: {
-      apikey: SECRET,
-      Authorization: `Bearer ${SECRET}`,
-      "Content-Type": "application/json",
-      ...(init.headers ?? {}),
-    },
-  });
+/**
+ * One retry on a dropped connection.
+ *
+ * The gateway closes pooled sockets between bursts of admin requests, and the
+ * seed goes delete-delete-delete-create in a tight loop. Without the retry it
+ * dies on the first create after cleaning up the previous run, on a socket the
+ * server had already closed. A POST retried after a reset may find the user was
+ * created the first time; the clear "already registered" error that follows is
+ * better than a bare ECONNRESET, and the next run deletes it.
+ */
+const rpc = async (path, init = {}) => {
+  const send = () =>
+    fetch(`${URL_BASE}${path}`, {
+      ...init,
+      headers: {
+        apikey: SECRET,
+        Authorization: `Bearer ${SECRET}`,
+        "Content-Type": "application/json",
+        ...(init.headers ?? {}),
+      },
+    });
+
+  try {
+    return await send();
+  } catch (error) {
+    if (!(error instanceof TypeError)) throw error;
+    return send();
+  }
+};
 
 /** A one-page PDF, so opening a document shows something rather than a 404. */
 function buildPdf(text) {
@@ -332,6 +369,8 @@ async function main() {
 
   console.log(`Created ${ADMIN_EMAIL}.`);
 
+  let rejectedIndex = 0;
+
   for (const [index, person] of PEOPLE.entries()) {
     const email = `${MARKER}${pad(index + 1)}@${DOMAIN}`;
     const userId = await createUser(email);
@@ -340,8 +379,8 @@ async function main() {
     const submittedAt =
       person.status === "onboarding" ? null : daysAgo(Math.max(1, 20 - index));
 
-    // Insert as pending first: a background check insert resets the status to
-    // pending by trigger, so the final status is written after the document.
+    // The status is not a column any more; it is derived from the documents.
+    // submitted_at is what separates onboarding from pending.
     const inserted = await rpc("/rest/v1/caregivers", {
       method: "POST",
       headers: { Prefer: "return=representation" },
@@ -349,7 +388,7 @@ async function main() {
         user_id: userId,
         display_name: person.name,
         bio: person.bio,
-        verification_status: "pending",
+        submitted_at: submittedAt,
         created_at: createdAt,
       }),
     });
@@ -358,11 +397,14 @@ async function main() {
       throw new Error(`caregiver ${email}: ${inserted.status} ${await inserted.text()}`);
     }
 
+    let documentId = null;
+
     if (person.status !== "onboarding") {
       const path = await uploadDocument(userId, person.name, index);
 
-      await rpc("/rest/v1/caregiver_documents", {
+      const created = await rpc("/rest/v1/caregiver_documents?select=id", {
         method: "POST",
+        headers: { Prefer: "return=representation" },
         body: JSON.stringify({
           caregiver_id: userId,
           kind: "background_check",
@@ -371,6 +413,12 @@ async function main() {
           created_at: submittedAt,
         }),
       });
+
+      if (!created.ok) {
+        throw new Error(`document ${email}: ${created.status} ${await created.text()}`);
+      }
+
+      documentId = (await created.json())[0]?.id ?? null;
     }
 
     if (person.city) {
@@ -402,15 +450,27 @@ async function main() {
 
     const reviewed = person.status === "approved" || person.status === "rejected";
 
-    await rpc(`/rest/v1/caregivers?user_id=eq.${userId}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        verification_status: person.status === "onboarding" ? "pending" : person.status,
-        submitted_at: submittedAt,
-        reviewed_by: reviewed ? adminId : null,
-        reviewed_at: reviewed ? daysAgo(Math.max(1, 12 - index)) : null,
-      }),
-    });
+    if (documentId && reviewed) {
+      const rejection =
+        person.status === "rejected"
+          ? REJECTIONS[rejectedIndex++ % REJECTIONS.length]
+          : null;
+
+      const decided = await rpc(`/rest/v1/caregiver_documents?id=eq.${documentId}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          review_status: person.status,
+          reviewed_by: adminId,
+          reviewed_at: daysAgo(Math.max(1, 12 - index)),
+          rejection_reason: rejection?.reason ?? null,
+          rejection_message: rejection?.message ?? null,
+        }),
+      });
+
+      if (!decided.ok) {
+        throw new Error(`decision ${email}: ${decided.status} ${await decided.text()}`);
+      }
+    }
 
     console.log(
       `  ${pad(index + 1)}  ${person.status.padEnd(10)} ${(person.name ?? "(no name)").padEnd(16)} ${email}`,

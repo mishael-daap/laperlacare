@@ -137,7 +137,8 @@ export async function getCaregiverForReview(
   supabase: SupabaseClient<Database>,
   userId: string,
 ) {
-  const [detail, contacts, documents, availability, needs, supports] = await Promise.all([
+  const [detail, contacts, documents, availability, needs, supports, history] =
+    await Promise.all([
     supabase.rpc("admin_caregiver_detail", { p_user_id: userId }),
     supabase.from("contacts").select("*").eq("user_id", userId).order("created_at"),
     supabase
@@ -153,6 +154,12 @@ export async function getCaregiverForReview(
       .order("start_time"),
     supabase.from("needs").select("slug, label, position").order("position"),
     supabase.from("supports").select("slug, label, position").order("position"),
+    supabase
+      .from("caregiver_document_reviews")
+      .select("*")
+      .eq("caregiver_id", userId)
+      .order("reviewed_at", { ascending: false })
+      .limit(50),
   ]);
 
   if (detail.error) throw new Error(`Could not load the caregiver: ${detail.error.message}`);
@@ -171,10 +178,31 @@ export async function getCaregiverForReview(
     }),
   );
 
+  if (history.error) throw new Error(history.error.message);
+
+  // The decision already shown on a document row is not "history" — printing it
+  // twice makes every caregiver look like they have a past. Compare the pair,
+  // because the same reviewed_at is copied into both places by the trigger.
+  const currentDecisions = new Set(
+    (documents.data ?? [])
+      .filter((document) => document.reviewed_at)
+      .map(
+        (document) =>
+          `${document.id}:${new Date(document.reviewed_at as string).getTime()}`,
+      ),
+  );
+
   return {
     caregiver,
     contacts: contacts.data ?? [],
     documents: signed,
+    history: (history.data ?? []).filter(
+      (entry) =>
+        !entry.document_id ||
+        !currentDecisions.has(
+          `${entry.document_id}:${new Date(entry.reviewed_at).getTime()}`,
+        ),
+    ),
     availability: availability.data ?? [],
     needs: needs.data ?? [],
     supports: supports.data ?? [],

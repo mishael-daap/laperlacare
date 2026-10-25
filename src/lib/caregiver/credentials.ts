@@ -17,8 +17,59 @@ export const DOCUMENT_KINDS = [
 
 export type DocumentKind = (typeof DOCUMENT_KINDS)[number]["value"];
 
+/**
+ * Why an admin refused a document.
+ *
+ * The slugs are duplicated from the check constraint in
+ * `20261024090000_document_rejection_reasons_and_history.sql`, the same way
+ * DOCUMENT_KINDS duplicates the `kind` check on the documents table. A label
+ * here has to read after a colon as well as in a picker, which is why they are
+ * short phrases rather than sentences.
+ */
+export const REJECTION_REASONS = [
+  { value: "invalid_or_unreadable", label: "Invalid or unreadable" },
+  { value: "not_california", label: "Not a California document" },
+  { value: "expired", label: "Expired" },
+  { value: "name_mismatch", label: "Name does not match the account" },
+  { value: "wrong_type", label: "Wrong document type" },
+  { value: "other", label: "Other" },
+] as const;
+
+export type RejectionReason = (typeof REJECTION_REASONS)[number]["value"];
+
+export function rejectionReasonLabel(reason: string | null | undefined) {
+  return REJECTION_REASONS.find((entry) => entry.value === reason)?.label ?? null;
+}
+
+/**
+ * "Other" is only useful with an explanation, so choosing it requires the
+ * message. The other five read fine on their own.
+ */
+export function requiresRejectionMessage(reason: string | null | undefined) {
+  return reason === "other";
+}
+
 export function kindLabel(kind: string) {
   return DOCUMENT_KINDS.find((entry) => entry.value === kind)?.label ?? "Document";
+}
+
+/**
+ * The kind as it reads inside a sentence.
+ *
+ * `kindLabel` is a title: "Background check", "CPR". Dropping that into prose
+ * with `.toLowerCase()` turns CPR into "cpr", so the sentence forms are spelled
+ * out here instead.
+ */
+const KIND_IN_SENTENCE: Record<string, string> = {
+  background_check: "background check",
+  cpr: "CPR",
+  drivers_licence: "driver's licence",
+  certification: "certification",
+  other: "document",
+};
+
+export function kindInSentence(kind: string) {
+  return KIND_IN_SENTENCE[kind] ?? "document";
 }
 
 /** Longest a file name renders before it is shortened. */
@@ -111,7 +162,12 @@ export function formatExpiry(expiresAt: string) {
  */
 export function statusSentence(
   status: string,
-  documents: { kind: string; review_status: string; expires_at: string | null }[],
+  documents: {
+    kind: string;
+    review_status: string;
+    expires_at: string | null;
+    rejection_reason?: string | null;
+  }[],
 ) {
   const states = documents.map((document) => ({
     document,
@@ -120,7 +176,15 @@ export function statusSentence(
 
   const rejected = states.find((entry) => entry.state === "rejected");
   if (rejected) {
-    return `${kindLabel(rejected.document.kind)} was not accepted. Replace it and we will review it again.`;
+    // "Other" says nothing the message beside the row does not say better, so
+    // the sentence falls back to the plain refusal rather than printing it.
+    const reason = requiresRejectionMessage(rejected.document.rejection_reason)
+      ? null
+      : rejectionReasonLabel(rejected.document.rejection_reason);
+
+    return reason
+      ? `${kindLabel(rejected.document.kind)} was not accepted: ${reason}. Replace it and we will review it again.`
+      : `${kindLabel(rejected.document.kind)} was not accepted. Replace it and we will review it again.`;
   }
 
   const expired = states.find((entry) => entry.state === "expired");

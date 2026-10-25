@@ -22,6 +22,7 @@ import {
   EXPIRING_SOON_DAYS,
   formatExpiry,
   kindLabel,
+  rejectionReasonLabel,
   shortFileName,
   type DocumentKind,
 } from "@/lib/caregiver/credentials";
@@ -115,6 +116,19 @@ export function CredentialsSection({ documents }: { documents: CaregiverDocument
                           ? ` · ${days === 0 ? "today" : `${days} day${days === 1 ? "" : "s"} left`}`
                           : ""}
                       </p>
+                    ) : null}
+
+                    {state === "rejected" && document.rejection_reason ? (
+                      <div className="mt-2 rounded-lg border border-border bg-muted/40 px-3 py-2">
+                        <p className="text-sm font-medium">
+                          {rejectionReasonLabel(document.rejection_reason)}
+                        </p>
+                        {document.rejection_message ? (
+                          <p className="mt-1 whitespace-pre-line text-sm text-muted-foreground">
+                            {document.rejection_message}
+                          </p>
+                        ) : null}
+                      </div>
                     ) : null}
                   </div>
                 </div>

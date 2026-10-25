@@ -89,6 +89,60 @@ export type Database = {
           },
         ]
       }
+      caregiver_document_reviews: {
+        Row: {
+          caregiver_id: string
+          decision: string
+          document_id: string | null
+          file_name: string | null
+          id: string
+          kind: string
+          message: string | null
+          reason: string | null
+          reviewed_at: string
+          reviewed_by: string | null
+        }
+        Insert: {
+          caregiver_id: string
+          decision: string
+          document_id?: string | null
+          file_name?: string | null
+          id?: string
+          kind: string
+          message?: string | null
+          reason?: string | null
+          reviewed_at?: string
+          reviewed_by?: string | null
+        }
+        Update: {
+          caregiver_id?: string
+          decision?: string
+          document_id?: string | null
+          file_name?: string | null
+          id?: string
+          kind?: string
+          message?: string | null
+          reason?: string | null
+          reviewed_at?: string
+          reviewed_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "caregiver_document_reviews_caregiver_id_fkey"
+            columns: ["caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "caregiver_document_reviews_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "caregiver_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       caregiver_documents: {
         Row: {
           caregiver_id: string
@@ -97,6 +151,8 @@ export type Database = {
           file_name: string | null
           id: string
           kind: string
+          rejection_message: string | null
+          rejection_reason: string | null
           review_status: string
           reviewed_at: string | null
           reviewed_by: string | null
@@ -109,6 +165,8 @@ export type Database = {
           file_name?: string | null
           id?: string
           kind: string
+          rejection_message?: string | null
+          rejection_reason?: string | null
           review_status?: string
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -121,6 +179,8 @@ export type Database = {
           file_name?: string | null
           id?: string
           kind?: string
+          rejection_message?: string | null
+          rejection_reason?: string | null
           review_status?: string
           reviewed_at?: string | null
           reviewed_by?: string | null

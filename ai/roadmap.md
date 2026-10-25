@@ -46,6 +46,10 @@ When the content is final, delete these comments. -->
 - **Status**: in development
 - **Goal**: A caregiver ticks the needs they can support and the supports they provide, from the same two fixed lists parents tick, records the ages they work with, their own date of birth, and their gender, and uploads one document per licence or certification — driver's licence, CPR, BT — each approved or rejected by an admin individually with an expiry date, so the profile says what a caregiver can actually do and what has actually been verified.
 
+## 7.3. Document rejection reasons and review history
+- **Status**: in development
+- **Goal**: An admin rejecting a document says why from a fixed list, with an optional message; the caregiver sees that reason on their credential row and is emailed; and every approve or reject is kept in an append-only history that survives the document being replaced.
+
 ## 8. Membership and billing
 - **Status**: pending
 - **Goal**: A household subscribes for a flat monthly fee and the platform tracks whether it is active.
