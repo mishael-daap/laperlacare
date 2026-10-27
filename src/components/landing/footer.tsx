@@ -1,19 +1,27 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/lib/auth/actions";
 import { createClient } from "@/lib/supabase/server";
 
+const linkClass =
+  "text-sm text-brand-sage-300 underline-offset-4 transition-colors hover:text-brand-pearl hover:underline";
+
 /**
- * The footer, and the only part of the app that knows who is signed in.
+ * The forest mast, and the only navigation every page shares.
  *
- * Rendered per page rather than in the root layout: the profile page must not
- * have it, and a layout cannot hand something back that the root layout already
- * rendered. Pages that want it render it; pages that do not, do not.
+ * Three things, one row: the mark, the three destinations, the year. Everything
+ * else that used to live here — a tagline, a rule, a photograph credit — was
+ * either copy the page did not have or a line that separated nothing.
  *
- * It cannot be prerendered, which is why `SiteFooter` wraps it in Suspense —
- * the page shell stays static and this one strip is resolved per request.
+ * The reversed lockup is the reason the footer can stay forest: the delivered
+ * wordmark is forest and sage text, which reads at 1.8:1 on this surface, so the
+ * on-dark file carries the same outlined artwork in the light palette.
+ *
+ * It cannot be prerendered, which is why `SiteFooter` wraps it in Suspense: the
+ * page shell stays static and this one strip is resolved per request.
  */
 export async function Footer() {
   const supabase = await createClient();
@@ -21,32 +29,24 @@ export async function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-foreground px-6 py-12 text-background sm:px-10 lg:px-16">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6">
-        <p className="text-sm text-background/70">© {year} Perla Care</p>
+    <footer className="bg-brand-forest text-brand-sage-100">
+      <div className="landing-shell flex flex-col gap-6 py-12 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+          <Link href="/" aria-label="Perla Care home" className="inline-block">
+            <Logo tone="onDark" alt="" className="h-8" />
+          </Link>
 
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-          {/* The only navigation in the app. A nav bar would be a second way to
-              leave every page; one link, in the footer, is enough to stop the
-              about page being orphaned. */}
-          <Link
-            href="/about"
-            className="text-sm text-background/70 transition-opacity hover:opacity-80"
-          >
+          <p className="text-sm text-brand-sage-300">© {year} Perla Care</p>
+        </div>
+
+        <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <Link href="/about" className={linkClass}>
             About
           </Link>
-
-          <Link
-            href="/contact"
-            className="text-sm text-background/70 transition-opacity hover:opacity-80"
-          >
+          <Link href="/contact" className={linkClass}>
             Contact
           </Link>
-
-          <Link
-            href="/terms"
-            className="text-sm text-background/70 transition-opacity hover:opacity-80"
-          >
+          <Link href="/terms" className={linkClass}>
             Terms
           </Link>
 
@@ -56,13 +56,13 @@ export async function Footer() {
                 type="submit"
                 variant="ghost"
                 size="sm"
-                className="text-background/70 hover:bg-transparent hover:text-background"
+                className="h-auto px-0 py-0 text-sm font-normal text-brand-sage-300 hover:bg-transparent hover:text-brand-pearl"
               >
                 Sign out
               </Button>
             </form>
           ) : null}
-        </div>
+        </nav>
       </div>
     </footer>
   );
@@ -70,11 +70,11 @@ export async function Footer() {
 
 /**
  * Drop this at the bottom of a page to give it a footer. The fallback repeats
- * the real footer's padding and background so nothing shifts when it arrives.
+ * the real footer's padding and height so nothing shifts when it arrives.
  */
 export function SiteFooter() {
   return (
-    <Suspense fallback={<div className="bg-foreground px-6 py-12 sm:px-10 lg:px-16" />}>
+    <Suspense fallback={<div className="min-h-[7.5rem] bg-brand-forest" aria-hidden="true" />}>
       <Footer />
     </Suspense>
   );

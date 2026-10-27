@@ -1,58 +1,85 @@
-const steps = [
+import {
+  HandHeart,
+  MessageCircleHeart,
+  SearchCheck,
+  UsersRound,
+  type LucideIcon,
+} from "lucide-react";
+
+type Step = {
+  title: string;
+  body: string;
+  Icon: LucideIcon;
+};
+
+const steps: Step[] = [
   {
     title: "Tell us about your family",
     body: "Complete our Family Care Questionnaire and tell us about your child\u2019s needs, schedule, and the type of caregiver you\u2019re looking for.",
+    Icon: MessageCircleHeart,
   },
   {
     title: "We search for your match",
     body: "Perla Care identifies and screens potential caregivers based on your family\u2019s needs and preferences.",
+    Icon: SearchCheck,
   },
   {
     title: "Meet your candidates",
     body: "Meet potential matches, ask questions, and decide who feels right for your family.",
+    Icon: UsersRound,
   },
   {
     title: "You choose your caregiver",
     body: "You make the final decision. Your family selects, hires, and pays the caregiver directly.",
+    Icon: HandHeart,
   },
 ];
 
 /**
- * Section 2. The four steps, replacing the old three benefits.
+ * The four steps, as a ledger rather than four equal cards.
  *
- * The pitch is matching, so the page has to say what matching actually involves
- * before it asks for money. Four short steps do that; a list of features would
- * describe the product instead of the experience of using it.
- *
- * An ordered list because it genuinely is a sequence, and the numbers do the
- * work of showing that. No connecting line, no cards, no icons — the same
- * argument the benefits section made: the space between the items separates
- * them for less than chrome would.
- *
- * The copy is the approved wording, word for word. Step two says "identifies
- * and screens potential caregivers", which is stronger than what the
- * architecture otherwise claims — the platform reviews the documents a
- * caregiver supplies, it does not run the checks itself. Worth revisiting if
- * the legal review lands differently.
+ * A real ordered list, because the sequence is real. The number is structural,
+ * so it is set in the display face and left in its own column; the icon belongs
+ * to the title, inline, never in a coloured tile. The heading stays with the
+ * reader on a desktop while the four rows pass, which is enough pinning for a
+ * process this short.
  */
 export function HowItWorks() {
   return (
-    <section className="px-6 py-24 sm:px-10 sm:py-32 lg:px-16">
-      <div className="max-w-6xl">
-        <h2 className="font-heading text-3xl font-medium tracking-tight sm:text-4xl">
-          How Perla Care works
-        </h2>
+    <section id="how" className="scroll-mt-24 bg-brand-sage-100">
+      <div className="landing-shell grid gap-12 py-28 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-20 lg:py-36">
+        <div className="self-start lg:sticky lg:top-16">
+          <h2 className="section-head font-heading max-w-[12ch]">
+            How Perla Care works
+          </h2>
+        </div>
 
-        <ol className="mt-16 grid gap-14 sm:grid-cols-2 sm:gap-10 lg:mt-20 lg:grid-cols-4 lg:gap-12">
-          {steps.map((step, index) => (
-            <li key={step.title} className="flex flex-col gap-3">
-              <span className="font-mono text-sm text-muted-foreground">
+        <ol className="border-t border-brand-sage-300">
+          {steps.map(({ title, body, Icon }, index) => (
+            <li
+              key={title}
+              className="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-5 border-b border-brand-sage-300 py-7 sm:grid-cols-[4rem_minmax(0,1fr)] sm:gap-8 sm:py-8"
+            >
+              <span
+                aria-hidden="true"
+                className="font-display text-3xl leading-none font-extrabold text-brand-sage-600 sm:text-4xl"
+              >
                 {index + 1}
               </span>
-              <h3 className="font-heading text-xl font-medium tracking-tight text-balance">
-                {step.title}
-              </h3>
-              <p className="text-pretty text-muted-foreground">{step.body}</p>
+
+              <div className="min-w-0">
+                <h3 className="flex items-center gap-2.5 font-heading text-xl sm:text-2xl">
+                  <Icon
+                    className="size-5 shrink-0 text-brand-sage-600"
+                    strokeWidth={1.75}
+                    aria-hidden="true"
+                  />
+                  {title}
+                </h3>
+                <p className="mt-2 max-w-[54ch] text-pretty text-brand-sage-700">
+                  {body}
+                </p>
+              </div>
             </li>
           ))}
         </ol>

@@ -156,7 +156,7 @@ export function CredentialDialog({
         <div className="flex flex-col gap-4">
           {mode === "add" ? (
             <div className="flex flex-col gap-2">
-              <span className="text-sm font-medium">Document</span>
+              <span className="text-sm font-semibold">Document</span>
               <DropdownMenu>
                 <DropdownMenuTrigger
                   render={
@@ -179,7 +179,7 @@ export function CredentialDialog({
             </div>
           ) : (
             <div className="flex flex-col gap-1">
-              <span className="text-sm font-medium">{kindLabel(kind)}</span>
+              <span className="text-sm font-semibold">{kindLabel(kind)}</span>
               <p className="text-sm text-muted-foreground">
                 The new file goes back into the review queue. The old one is removed.
               </p>
@@ -200,7 +200,7 @@ export function CredentialDialog({
           </div>
 
           <div className="flex flex-col gap-2">
-            <span className="text-sm font-medium">File</span>
+            <span className="text-sm font-semibold">File</span>
             <input
               ref={fileInput}
               type="file"

@@ -60,7 +60,7 @@ export function ChildCard({ child, needs, supports }: ChildCardProps) {
     <Card className="gap-4 px-4">
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1">
-          <h3 className="font-heading text-lg font-medium tracking-tight break-words">
+          <h3 className="font-heading text-lg tracking-tight break-words">
             {child.fullName}
           </h3>
           <p className="text-sm text-muted-foreground">
@@ -94,7 +94,7 @@ export function ChildCard({ child, needs, supports }: ChildCardProps) {
         <div className="flex flex-col gap-3">
           {selectedNeeds.length > 0 ? (
             <div className="flex flex-col gap-1.5">
-              <p className="text-xs font-medium text-muted-foreground">
+              <p className="text-xs font-semibold text-muted-foreground">
                 What a caregiver should know
               </p>
               <div className="flex flex-wrap gap-1.5">
@@ -109,7 +109,7 @@ export function ChildCard({ child, needs, supports }: ChildCardProps) {
 
           {selectedSupports.length > 0 ? (
             <div className="flex flex-col gap-1.5">
-              <p className="text-xs font-medium text-muted-foreground">
+              <p className="text-xs font-semibold text-muted-foreground">
                 Support they need
               </p>
               <div className="flex flex-wrap gap-1.5">
@@ -130,7 +130,7 @@ export function ChildCard({ child, needs, supports }: ChildCardProps) {
 
       {child.notes ? (
         <div className="flex flex-col gap-1 border-t border-border pt-3">
-          <p className="text-xs font-medium text-muted-foreground">
+          <p className="text-xs font-semibold text-muted-foreground">
             Anything else a caregiver should know
           </p>
           <p className="text-sm whitespace-pre-wrap break-words">{child.notes}</p>

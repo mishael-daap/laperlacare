@@ -35,3 +35,6 @@ yarn-error.log*
 
 # pnpm
 .pnpm-debug.log*
+
+# hallmark run artifacts
+/.hallmark/

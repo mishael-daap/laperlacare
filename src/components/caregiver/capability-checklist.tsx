@@ -36,7 +36,7 @@ export function CapabilityChecklist({
   return (
     <section className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <h2 className="font-heading text-xl font-medium tracking-tight">{title}</h2>
+        <h2 className="font-heading text-xl tracking-tight">{title}</h2>
         <p className="text-muted-foreground">{description}</p>
       </div>
 

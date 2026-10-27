@@ -44,7 +44,7 @@ export function VerificationStatus({
       className={[
         "absolute -right-1 -bottom-1 rounded-full",
         "border-[3px] border-background px-2.5 py-1",
-        "text-xs leading-none font-medium whitespace-nowrap",
+        "text-xs leading-none font-semibold whitespace-nowrap",
         tone,
       ].join(" ")}
     >

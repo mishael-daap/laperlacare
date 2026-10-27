@@ -91,7 +91,7 @@ export default async function AdminCaregiversPage(props: PageProps<"/admin/careg
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <h1 className="font-heading text-2xl font-medium tracking-tight">Caregivers</h1>
+        <h1 className="font-heading text-2xl tracking-tight">Caregivers</h1>
         <p className="text-muted-foreground">
           Pending submissions by default. Use the filters to see everyone.
         </p>
@@ -104,7 +104,7 @@ export default async function AdminCaregiversPage(props: PageProps<"/admin/careg
 
       {rows.length === 0 ? (
         <div className="flex flex-col gap-2 rounded-xl border border-border px-6 py-12 text-center">
-          <p className="font-medium">No caregivers in this view.</p>
+          <p className="font-semibold">No caregivers in this view.</p>
           <p className="text-sm text-muted-foreground">
             {query
               ? `Nothing matches “${query}”.`
@@ -137,7 +137,7 @@ export default async function AdminCaregiversPage(props: PageProps<"/admin/careg
                   <TableCell>
                     <Link
                       href={`/admin/caregiver/${row.user_id}`}
-                      className="font-medium underline-offset-4 hover:underline"
+                      className="font-semibold underline-offset-4 hover:underline"
                     >
                       {row.display_name || "No name yet"}
                     </Link>

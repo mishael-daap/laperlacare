@@ -129,7 +129,7 @@ export function AuthForm({
                 I have read and agree to the Perla Care{" "}
                 <Link
                   href="/terms"
-                  className="text-foreground underline underline-offset-4"
+                  className="whitespace-nowrap text-foreground underline underline-offset-4"
                 >
                   Terms &amp; Conditions
                 </Link>

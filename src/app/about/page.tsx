@@ -43,13 +43,16 @@ export default function AboutPage() {
       <main className="flex-1">
         <section className="px-6 pt-24 pb-16 sm:px-10 sm:pt-32 lg:px-16">
           <div className="mx-auto max-w-3xl">
-            <p className="font-mono text-xs tracking-wider text-muted-foreground uppercase">
-              Less searching. More confidence. Better matches.
-            </p>
-
-            <h1 className="mt-6 font-heading text-3xl font-medium tracking-tight text-balance sm:text-4xl md:text-5xl">
+            <h1 className="font-heading text-3xl tracking-tight text-balance sm:text-4xl md:text-5xl">
               Your child is unique. Their care should be too.
             </h1>
+
+            {/* The slogan used to sit above the heading in tracked capitals,
+                which is the house style Hallmark refuses. As the line under the
+                heading it does the same job and reads as a sentence. */}
+            <p className="mt-5 font-heading text-xl text-brand-sage-700">
+              Less searching. More confidence. Better matches.
+            </p>
 
             <p className="mt-8 text-lg text-pretty text-muted-foreground">
               Every child and every family is different. Perla Care helps
@@ -62,14 +65,14 @@ export default function AboutPage() {
 
         <section className="px-6 py-16 sm:px-10 sm:py-20 lg:px-16">
           <div className="mx-auto max-w-6xl">
-            <h2 className="font-heading text-3xl font-medium tracking-tight sm:text-4xl">
+            <h2 className="font-heading text-3xl tracking-tight sm:text-4xl">
               Support that fits your family
             </h2>
 
             <ul className="mt-16 grid gap-14 sm:grid-cols-3 sm:gap-10 lg:mt-20 lg:gap-16">
               {support.map((item) => (
                 <li key={item.title} className="flex flex-col gap-3">
-                  <h3 className="font-heading text-xl font-medium tracking-tight text-balance">
+                  <h3 className="font-heading text-xl tracking-tight text-balance">
                     {item.title}
                   </h3>
                   <p className="text-pretty text-muted-foreground">
@@ -84,7 +87,7 @@ export default function AboutPage() {
         <section className="px-6 pt-16 pb-28 sm:px-10 sm:pt-20 sm:pb-36 lg:px-16">
           <div className="mx-auto flex max-w-6xl flex-col gap-8">
             <div className="flex max-w-3xl flex-col gap-6">
-              <h2 className="font-heading text-3xl font-medium tracking-tight text-balance sm:text-4xl">
+              <h2 className="font-heading text-3xl tracking-tight text-balance sm:text-4xl">
                 Proudly serving Contra Costa County
               </h2>
 
@@ -94,9 +97,8 @@ export default function AboutPage() {
               </p>
 
               <p className="text-pretty text-muted-foreground">
-                Pittsburg &bull; Antioch &bull; Bay Point &bull; Brentwood
-                &bull; Oakley &bull; Concord &bull; Pleasant Hill &bull; Martinez
-                &amp; surrounding areas
+                Pittsburg, Antioch, Bay Point, Brentwood, Oakley, Concord,
+                Pleasant Hill, Martinez, and surrounding areas
               </p>
 
               {/* A link rather than a dead end. The contact page answers this

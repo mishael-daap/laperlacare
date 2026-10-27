@@ -49,7 +49,7 @@ export function ContactsSection() {
             {open ? (
               <div className="flex flex-col gap-4 px-4">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-medium">Editing {contact.label.toLowerCase()}</p>
+                  <p className="text-sm font-semibold">Editing {contact.label.toLowerCase()}</p>
                   <Button
                     type="button"
                     variant="ghost"
@@ -112,7 +112,7 @@ export function ContactsSection() {
                 <div className="flex min-w-0 flex-col gap-1">
                   <p className="text-xs text-muted-foreground">{contact.label}</p>
 
-                  <p className="font-medium break-words">
+                  <p className="font-semibold break-words">
                     {contact.phone || (
                       <span className="text-muted-foreground">No phone number</span>
                     )}

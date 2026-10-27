@@ -13,8 +13,8 @@ import Link from "next/link";
  */
 export default function NotFound() {
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-8 bg-primary px-6 py-24 text-center text-primary-foreground">
-      <h1 className="font-mono text-2xl font-medium tracking-tight text-balance sm:text-3xl md:text-4xl">
+    <main className="flex flex-1 flex-col items-center justify-center gap-8 bg-brand-forest px-6 py-24 text-center text-brand-sage-100">
+      <h1 className="font-mono text-2xl tracking-tight text-balance sm:text-3xl md:text-4xl">
         Oops, we couldn&rsquo;t find that
       </h1>
 

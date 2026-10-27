@@ -29,7 +29,7 @@ export default async function AuthErrorPage({
   return (
     <main className="flex flex-1 flex-col items-center justify-center px-6 py-16 sm:py-24">
       <div className="w-full max-w-sm text-center">
-        <h1 className="font-heading text-2xl font-medium tracking-tight">
+        <h1 className="font-heading text-2xl tracking-tight">
           That link did not work
         </h1>
 

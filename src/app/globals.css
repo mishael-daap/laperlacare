@@ -1,3 +1,10 @@
+/* Hallmark · shape: The Welcome Arc · genre: playful · theme: Perla Care brand book · redesign: full · hero: Poster · nav: floating pearl pill in the hero · footer: forest mast · signature: the mark's smile at page scale, pearl and all, under the hero · posture: committed · surface: absolute · copy: reworded from the page's own facts · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H5 E4 S5 R4 V5 · weakest: R, the smile is the page's one ornament and appears only in the hero and above the close; every other seam is a surface change and a hairline */
+/* Hallmark · waive 7b · surface: absolute · the card is the brand book's white and the pearl is its cream, and a tinted white is no longer that colour */
+/* Hallmark · reworded the hero and six headings from the page's own facts; the price, refund, location, steps and answers are unchanged · 58 and 69 name the repetitions cut */
+/* Hallmark · dropped the hero cut-outs and the final call's second price line · the user retired the photographs and 69 names the echo */
+/* Hallmark · hero-review: in-thread · 4 findings · 4 resolved (the hero measure, the pill's ring, the 56px action, the 57.6px gutter) */
+/* Hallmark · finish-review: in-thread · 5 findings · 4 resolved 1 note (58, the owner's copy) · gap: none */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -18,8 +25,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-poppins), ui-sans-serif, sans-serif, system-ui;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
-  --font-cursive: var(--font-great-vibes), cursive;
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-bricolage), var(--font-poppins), sans-serif;
+  --font-display: var(--font-bricolage), var(--font-poppins), sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -53,15 +60,21 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  --color-brand-sage-100: var(--brand-sage-100);
+  --color-brand-sage-300: var(--brand-sage-300);
+  --color-brand-sage-600: var(--brand-sage-600);
+  --color-brand-sage-700: var(--brand-sage-700);
+  --color-brand-forest: var(--brand-forest);
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-pearl: var(--brand-pearl);
+  --color-brand-white: var(--brand-white);
+  --radius-sm: calc(var(--radius) * 0.42);
+  --radius-md: calc(var(--radius) * 0.75);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-  --font-serif: var(--font-playfair), ui-serif, serif;
-  --radius: 1.05rem;
   --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
   --tracking-tight: calc(var(--tracking-normal) - 0.025em);
   --tracking-wide: calc(var(--tracking-normal) + 0.025em);
@@ -87,85 +100,321 @@
   --color-destructive-foreground: var(--destructive-foreground);
 }
 
+/*
+ * The brand palette, declared once, in the values the brand book publishes.
+ * Nothing below this block writes a colour of its own: every semantic token is
+ * a reference, so a second screen can never invent a shade.
+ *
+ * `--brand-sage-700` is the one addition to the kit. Sage text on very light
+ * sage measures 4.22:1, under AA for body copy, and that pairing is everywhere
+ * once the paper is sage. This darker step is 5.9:1 on the same surface.
+ */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.1450 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.6423 0.1147 247.9912);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.6423 0.1147 247.9912);
-  --primary: oklch(0.6423 0.1147 247.9912);
-  --primary-foreground: oklch(0.9850 0 0);
-  --secondary: oklch(0.9700 0 0);
-  --secondary-foreground: oklch(0.6423 0.1147 247.9912);
-  --muted: oklch(0.9700 0 0);
-  --muted-foreground: oklch(0.5560 0 0);
-  --accent: oklch(0.9700 0 0);
-  --accent-foreground: oklch(0.6423 0.1147 247.9912);
-  --destructive: oklch(0.5770 0.2450 27.3250);
-  /* Added for the caregiver verification badge. The theme shipped no success
-     or warning colour, and a status meaning "you are fine" versus "we are
-     still looking" needs to be told apart at a glance. */
-  /* Bright rather than deep. The first pass was a dark forest green, which read
-     as "disabled" on the availability grid — a lit hour should look switched
-     on. The foreground flipped to near-black to match: white on a green this
-     light would have been unreadable. */
-  --success: oklch(0.7800 0.1900 148);
-  --success-foreground: oklch(0.2050 0 0);
-  --warning: oklch(0.8000 0.1500 82);
-  --warning-foreground: oklch(0.2050 0 0);
-  --border: oklch(0.9220 0 0);
-  --input: oklch(0.9220 0 0);
-  --ring: oklch(0.7080 0 0);
-  --chart-1: oklch(0.8100 0.1000 252);
-  --chart-2: oklch(0.6200 0.1900 260);
-  --chart-3: oklch(0.5500 0.2200 263);
-  --chart-4: oklch(0.4900 0.2200 264);
-  --chart-5: oklch(0.4200 0.1800 266);
-  --radius: 1.05rem;
-  --sidebar: oklch(0.9850 0 0);
-  --sidebar-foreground: oklch(0.1450 0 0);
-  --sidebar-primary: oklch(0.2050 0 0);
-  --sidebar-primary-foreground: oklch(0.9850 0 0);
-  --sidebar-accent: oklch(0.9700 0 0);
-  --sidebar-accent-foreground: oklch(0.2050 0 0);
-  --sidebar-border: oklch(0.9220 0 0);
-  --sidebar-ring: oklch(0.7080 0 0);
-  --destructive-foreground: oklch(1 0 0);
+  --brand-sage-100: #d4e2cf; /* very light sage — paper, muted surfaces */
+  --brand-sage-300: #9db89a; /* soft sage — dividers, quiet accents */
+  --brand-sage-600: #4f6e55; /* sage text — ring, boundaries, accents */
+  --brand-sage-700: #3f5a45; /* extension — muted text on sage, AA */
+  --brand-forest: #2e4636; /* forest — ink, primary buttons */
+  --brand-gold: #e0a93b; /* the pearl — decoration only */
+  --brand-pearl: #f5e6c6; /* the shine inside the pearl */
+  --brand-white: #ffffff; /* cards, inputs */
+
+  --background: var(--brand-sage-100);
+  --foreground: var(--brand-forest);
+  --card: var(--brand-white);
+  --card-foreground: var(--brand-forest);
+  --popover: var(--brand-white);
+  --popover-foreground: var(--brand-forest);
+  /*
+   * Gold is the action colour: every filled button on the site. Its label is
+   * forest, never white — white on gold is 2.12:1 and unreadable, forest on
+   * gold is 4.84:1 and passes. Gold is never a text colour, a link, an icon or
+   * a page background: it is 2.12:1 on white and 1.57:1 on the sage paper.
+   */
+  --primary: var(--brand-gold);
+  --primary-foreground: var(--brand-forest);
+  --secondary: var(--brand-forest);
+  --secondary-foreground: var(--brand-pearl);
+  --muted: var(--brand-sage-100);
+  --muted-foreground: var(--brand-sage-700);
+  --accent: var(--brand-sage-100);
+  --accent-foreground: var(--brand-forest);
+
+  /*
+   * The kit carries no error, success or warning colour, and three screens
+   * depend on telling "approved" from "pending" at a glance. The red is mixed
+   * warm so it sits beside sage instead of shouting at it; the green is deep
+   * enough to be legible as text on white, not the bright green the first pass
+   * used, which measured 2:1 there; pending borrows the pearl's gold, because
+   * a status waiting on a person is what gold is for.
+   */
+  --destructive: #a63d34;
+  --destructive-foreground: var(--brand-white);
+  --success: #3e6b4b;
+  --success-foreground: var(--brand-white);
+  --warning: var(--brand-gold);
+  --warning-foreground: var(--brand-forest);
+
+  --border: var(--brand-sage-300);
+  --input: var(--brand-sage-600);
+  --ring: var(--brand-sage-600);
+  --chart-1: var(--brand-sage-300);
+  --chart-2: var(--brand-sage-600);
+  --chart-3: var(--brand-forest);
+  --chart-4: var(--brand-gold);
+  --chart-5: var(--brand-pearl);
+
+  --radius: 1.5rem;
+
+  --sidebar: var(--brand-sage-100);
+  --sidebar-foreground: var(--brand-forest);
+  --sidebar-primary: var(--brand-forest);
+  --sidebar-primary-foreground: var(--brand-white);
+  --sidebar-accent: var(--brand-white);
+  --sidebar-accent-foreground: var(--brand-forest);
+  --sidebar-border: var(--brand-sage-300);
+  --sidebar-ring: var(--brand-sage-600);
+
   --font-sans: var(--font-poppins), ui-sans-serif, sans-serif, system-ui;
-  --font-serif: var(--font-playfair), ui-serif, serif;
+  --font-heading: var(--font-bricolage), var(--font-poppins), sans-serif;
+  --font-display: var(--font-bricolage), var(--font-poppins), sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
-  --font-cursive: var(--font-great-vibes), cursive;
-  --shadow-color: oklch(0 0 0);
-  --shadow-opacity: 0.1;
+
+  --shadow-color: var(--brand-forest);
+  --shadow-opacity: 0.08;
   --shadow-blur: 3px;
   --shadow-spread: 0px;
   --shadow-offset-x: 0;
   --shadow-offset-y: 1px;
   --letter-spacing: 0em;
   --spacing: 0.25rem;
-  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
-  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
-  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
-  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
-  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
-  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
   --tracking-normal: 0em;
-}
 
+  /* Flat surfaces, as the brand book asks. Elevation is lightness, not blur. */
+  --shadow-2xs: 0 1px 2px 0px color-mix(in oklab, var(--brand-forest) 5%, transparent);
+  --shadow-xs: 0 1px 2px 0px color-mix(in oklab, var(--brand-forest) 6%, transparent);
+  --shadow-sm: 0 1px 3px 0px color-mix(in oklab, var(--brand-forest) 8%, transparent);
+  --shadow: 0 2px 6px -1px color-mix(in oklab, var(--brand-forest) 10%, transparent);
+  --shadow-md: 0 4px 10px -2px color-mix(in oklab, var(--brand-forest) 12%, transparent);
+  --shadow-lg: 0 8px 20px -4px color-mix(in oklab, var(--brand-forest) 14%, transparent);
+  --shadow-xl: 0 16px 32px -8px color-mix(in oklab, var(--brand-forest) 16%, transparent);
+  --shadow-2xl: 0 24px 48px -12px color-mix(in oklab, var(--brand-forest) 20%, transparent);
+}
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-    letter-spacing: var(--tracking-normal);
-  }
+
+  /*
+   * `overflow-x: clip` on the root pair, not `hidden`: hidden turns the element
+   * into a scroll container, which breaks position: sticky in the save bar and
+   * makes the page jump on iOS. `clip` cuts the overflow and leaves scrolling
+   * to the viewport.
+   */
   html {
     @apply font-sans;
     color-scheme: light;
+    overflow-x: clip;
+    scrollbar-color: var(--brand-sage-300) var(--brand-sage-100);
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    letter-spacing: var(--tracking-normal);
+    overflow-x: clip;
+    /* Poppins sets a tall x-height; 1.6 is the brand's line and the legible one. */
+    line-height: 1.6;
+  }
+
+  /*
+   * Headings are one weight and one colour, set once here rather than repeated
+   * in every class string. Bricolage at 800 is the face the wordmark outlines
+   * were drawn from; 1.12 of leading is what keeps a two-line head from
+   * closing up at display size.
+   */
+  h1,
+  h2,
+  h3 {
+    @apply font-heading text-foreground;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.12;
+    text-wrap: balance;
+    overflow-wrap: break-word;
+    min-width: 0;
+  }
+
+  ::selection {
+    background: var(--brand-sage-300);
+    color: var(--brand-forest);
+  }
+
+  /*
+   * Forest bands re-point the ring. Sage text on forest is 1.8:1, well under the
+   * 3:1 a focus indicator needs, so the outline follows the surface: light sage
+   * wherever the band is forest. The utility that paints the band is the marker,
+   * which keeps the rule next to the thing it is about instead of asking every
+   * dark section to remember a data attribute.
+   */
+  .bg-brand-forest {
+    --ring: var(--brand-sage-100);
+  }
+
+  /*
+   * One focus treatment for the whole app: a solid sage ring, appearing with no
+   * transition, at 3px so it survives on both the sage paper and a white card.
+   * shadcn's own components draw a ring as well and keep it; this is what makes
+   * a link, a summary and a native control answer to the same key.
+   */
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* Nothing here animates for decoration, but nothing should move without it. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/*
+ * The landing page's own geometry. Everything below reads the tokens above;
+ * no new colour, face or radius is invented here. The shell is the one
+ * container the page uses, capped at 1440 with 64px gutters so the measure
+ * holds at 1440 and the gutters grow at 1920.
+ */
+@layer components {
+  .landing-shell {
+    width: 100%;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 4.5vw, 4rem);
+  }
+
+  .display-1 {
+    font-size: clamp(3rem, 6.2vw, 5.25rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    overflow-wrap: break-word;
+    min-width: 0;
+  }
+
+  .section-head {
+    font-size: clamp(2.25rem, 3.5vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    overflow-wrap: break-word;
+    min-width: 0;
+  }
+
+  .display-s {
+    font-size: clamp(2.5rem, 5vw, 3.75rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    overflow-wrap: break-word;
+    min-width: 0;
+  }
+
+  .lead {
+    font-size: clamp(1.125rem, 0.5vw + 1rem, 1.375rem);
+    line-height: 1.5;
+  }
+
+  /*
+   * One filled action, two surface values. The forest fill carries the light
+   * bands; the pearl fill carries the forest band and the hero. The shape,
+   * height, radius, type and states are identical, which is what makes it one
+   * button rather than two.
+   */
+  .landing-action {
+    height: 3.25rem;
+    min-height: 3.25rem;
+    border-radius: 999px;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-weight: 600;
+    /* The ring is drawn on the surface around the button, not on its fill. */
+    --ring: var(--brand-forest);
+  }
+
+  .landing-action:hover {
+    background: color-mix(in oklab, var(--primary) 86%, var(--brand-forest));
+  }
+
+  .landing-action:active {
+    transform: translateY(1px);
+  }
+
+  .landing-action:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* Same gold fill on the forest field; only the ring moves, because a forest
+     outline on the hero would be invisible. */
+  .landing-action-on-dark {
+    --ring: var(--brand-sage-100);
+  }
+
+  /* A white or pearl surface inside the forest band re-points the ring. */
+  .ring-on-light,
+  .on-pearl {
+    --ring: var(--brand-sage-600);
+  }
+
+  /* The library photograph takes the theme's warm treatment and an inset keyline. */
+  .photo-warm {
+    filter: sepia(0.12) saturate(1.06) contrast(1.02);
+  }
+
+  summary {
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-plus {
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  details[open] .faq-plus {
+    transform: rotate(45deg);
+  }
+}
+
+/*
+ * One entrance, on the hero only: a 520ms fade and 12px rise, staggered across
+ * the headline, the line and the action. The elements are visible without it;
+ * the animation only decides how they arrive.
+ */
+@keyframes landing-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.landing-rise {
+  animation: landing-rise 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-rise {
+    animation: none;
   }
 }

@@ -125,7 +125,7 @@ export default async function AdminCaregiverPage(
             )}
 
             <div className="flex flex-col gap-1">
-              <h1 className="font-heading text-2xl font-medium tracking-tight">{name}</h1>
+              <h1 className="font-heading text-2xl tracking-tight">{name}</h1>
               <p className="text-muted-foreground">{caregiver.email}</p>
 
               <div className="mt-1 flex flex-wrap items-center gap-2">
@@ -160,7 +160,7 @@ export default async function AdminCaregiverPage(
       </div>
 
       <section className="flex flex-col gap-4">
-        <h2 className="font-heading text-lg font-medium tracking-tight">Profile</h2>
+        <h2 className="font-heading text-lg tracking-tight">Profile</h2>
 
         {caregiver.bio ? (
           <p className="text-pretty text-muted-foreground">{caregiver.bio}</p>
@@ -169,7 +169,7 @@ export default async function AdminCaregiverPage(
         )}
 
         <div className="rounded-lg border border-border px-4 py-3">
-          <p className="text-sm font-medium">
+          <p className="text-sm font-semibold">
             {done} of {items.length} complete
           </p>
           <ul className="mt-2 flex flex-col gap-1.5">
@@ -191,13 +191,13 @@ export default async function AdminCaregiverPage(
       </section>
 
       <section className="flex flex-col gap-6">
-        <h2 className="font-heading text-lg font-medium tracking-tight">
+        <h2 className="font-heading text-lg tracking-tight">
           What they can support
         </h2>
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <p className="text-xs font-medium text-muted-foreground">Needs</p>
+            <p className="text-xs font-semibold text-muted-foreground">Needs</p>
             {needLabels.length === 0 ? (
               <p className="text-sm text-muted-foreground">None ticked.</p>
             ) : (
@@ -212,7 +212,7 @@ export default async function AdminCaregiverPage(
           </div>
 
           <div className="flex flex-col gap-2">
-            <p className="text-xs font-medium text-muted-foreground">Supports</p>
+            <p className="text-xs font-semibold text-muted-foreground">Supports</p>
             {supportLabels.length === 0 ? (
               <p className="text-sm text-muted-foreground">None ticked.</p>
             ) : (
@@ -229,7 +229,7 @@ export default async function AdminCaregiverPage(
       </section>
 
       <section className="flex flex-col gap-4">
-        <h2 className="font-heading text-lg font-medium tracking-tight">Contact details</h2>
+        <h2 className="font-heading text-lg tracking-tight">Contact details</h2>
 
         {contacts.length === 0 ? (
           <p className="text-muted-foreground">No contact details yet.</p>
@@ -240,10 +240,10 @@ export default async function AdminCaregiverPage(
                 key={contact.id}
                 className="flex flex-col gap-1 rounded-lg border border-border px-4 py-3"
               >
-                <p className="text-xs tracking-wide text-muted-foreground uppercase">
+                <p className="text-xs text-muted-foreground">
                   {contact.label}
                 </p>
-                {contact.phone ? <p className="font-medium">{contact.phone}</p> : null}
+                {contact.phone ? <p className="font-semibold">{contact.phone}</p> : null}
                 {contact.email ? (
                   <p className="text-sm text-muted-foreground">{contact.email}</p>
                 ) : null}
@@ -257,7 +257,7 @@ export default async function AdminCaregiverPage(
       </section>
 
       <section className="flex flex-col gap-4">
-        <h2 className="font-heading text-lg font-medium tracking-tight">Credentials</h2>
+        <h2 className="font-heading text-lg tracking-tight">Credentials</h2>
 
         {documents.length === 0 ? (
           <p className="text-muted-foreground">
@@ -276,7 +276,7 @@ export default async function AdminCaregiverPage(
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-sm font-medium">{kindLabel(document.kind)}</p>
+                      <p className="text-sm font-semibold">{kindLabel(document.kind)}</p>
                       <Badge
                         variant={
                           state === "approved"
@@ -308,7 +308,7 @@ export default async function AdminCaregiverPage(
 
                     {document.rejection_reason ? (
                       <div className="mt-2 rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm">
-                        <p className="font-medium">
+                        <p className="font-semibold">
                           {rejectionReasonLabel(document.rejection_reason)}
                         </p>
                         {document.rejection_message ? (
@@ -354,7 +354,7 @@ export default async function AdminCaregiverPage(
       {history.length > 0 ? (
         <section className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <h2 className="font-heading text-lg font-medium tracking-tight">
+            <h2 className="font-heading text-lg tracking-tight">
               Review history
             </h2>
             <p className="text-muted-foreground">
@@ -370,7 +370,7 @@ export default async function AdminCaregiverPage(
                 className="flex flex-col gap-1 border-b border-border py-4 first:pt-0 last:border-b-0 last:pb-0"
               >
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-sm font-medium">{kindLabel(entry.kind)}</p>
+                  <p className="text-sm font-semibold">{kindLabel(entry.kind)}</p>
                   <Badge variant={entry.decision === "approved" ? "success" : "destructive"}>
                     {entry.decision === "approved" ? "Approved" : "Rejected"}
                   </Badge>
@@ -402,7 +402,7 @@ export default async function AdminCaregiverPage(
       ) : null}
 
       <section className="flex flex-col gap-4">
-        <h2 className="font-heading text-lg font-medium tracking-tight">
+        <h2 className="font-heading text-lg tracking-tight">
           Weekly availability
         </h2>
 

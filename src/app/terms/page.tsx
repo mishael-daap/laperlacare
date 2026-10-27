@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { Logo } from "@/components/brand/logo";
 import { SiteFooter } from "@/components/landing/footer";
 
 export const metadata: Metadata = {
@@ -20,11 +21,11 @@ export default function TermsPage() {
     <>
       <main className="flex-1 px-6 pt-24 pb-28 sm:px-10 sm:pt-32 sm:pb-36 lg:px-16">
         <article className="mx-auto max-w-3xl">
-          <p className="font-mono text-xs tracking-wider text-muted-foreground uppercase">
-            Perla Care
-          </p>
+          {/* The name above the document is the mark, not a tracked-caps
+              label: a legal page is the one place a masthead belongs. */}
+          <Logo className="h-7" />
 
-          <h1 className="mt-6 font-heading text-3xl font-medium tracking-tight text-balance sm:text-4xl">
+          <h1 className="mt-6 font-heading text-3xl tracking-tight text-balance sm:text-4xl">
             Terms &amp; Conditions
           </h1>
 
@@ -42,7 +43,7 @@ export default function TermsPage() {
 
           <div className="mt-14 flex flex-col gap-12">
             <section id="about" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 1. About Perla Care
               </h2>
 
@@ -66,7 +67,7 @@ export default function TermsPage() {
             </section>
 
             <section id="for-families" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 2. For Families
               </h2>
 
@@ -89,7 +90,7 @@ export default function TermsPage() {
             </section>
 
             <section id="for-caregivers" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 3. For Caregivers
               </h2>
 
@@ -112,7 +113,7 @@ export default function TermsPage() {
             </section>
 
             <section id="independent-relationship" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 4. Independent Relationship
               </h2>
 
@@ -135,7 +136,7 @@ export default function TermsPage() {
             </section>
 
             <section id="background-checks" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 5. Background Checks and Qualifications
               </h2>
 
@@ -157,7 +158,7 @@ export default function TermsPage() {
             </section>
 
             <section id="non-medical-services" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 6. Non-Medical Services
               </h2>
 
@@ -180,7 +181,7 @@ export default function TermsPage() {
             </section>
 
             <section id="information-you-provide" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 7. Information You Provide
               </h2>
 
@@ -199,7 +200,7 @@ export default function TermsPage() {
             </section>
 
             <section id="privacy" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 8. Privacy
               </h2>
 
@@ -217,7 +218,7 @@ export default function TermsPage() {
             </section>
 
             <section id="payments" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 9. Payments
               </h2>
 
@@ -241,7 +242,7 @@ export default function TermsPage() {
             </section>
 
             <section id="user-conduct" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 10. User Conduct
               </h2>
 
@@ -260,7 +261,7 @@ export default function TermsPage() {
             </section>
 
             <section id="no-guarantee" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 11. No Guarantee of Matching or Services
               </h2>
 
@@ -273,7 +274,7 @@ export default function TermsPage() {
             </section>
 
             <section id="limitation-of-responsibility" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 12. Limitation of Responsibility
               </h2>
 
@@ -291,7 +292,7 @@ export default function TermsPage() {
             </section>
 
             <section id="termination" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 13. Termination of Access
               </h2>
 
@@ -309,7 +310,7 @@ export default function TermsPage() {
             </section>
 
             <section id="changes" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 14. Changes to These Terms
               </h2>
 
@@ -327,7 +328,7 @@ export default function TermsPage() {
             </section>
 
             <section id="governing-law" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 15. Governing Law
               </h2>
 
@@ -339,7 +340,7 @@ export default function TermsPage() {
             </section>
 
             <section id="contact" className="flex flex-col gap-4">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 16. Contact Us
               </h2>
 

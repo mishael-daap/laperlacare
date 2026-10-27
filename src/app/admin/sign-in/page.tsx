@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { AuthForm } from "@/components/auth/auth-form";
+import { Logo } from "@/components/brand/logo";
 
 /**
  * Admin sign-in.
@@ -26,14 +27,11 @@ export default async function AdminSignInPage(props: PageProps<"/admin/sign-in">
   return (
     <main className="flex flex-1 flex-col items-center justify-center px-6 py-16 sm:py-24">
       <div className="w-full max-w-sm">
-        <Link
-          href="/"
-          className="font-heading text-sm text-muted-foreground underline-offset-4 hover:underline"
-        >
-          Perla Care
+        <Link href="/" className="inline-block">
+          <Logo className="h-7" />
         </Link>
 
-        <h1 className="mt-8 font-heading text-3xl font-medium tracking-tight">
+        <h1 className="mt-8 font-heading text-3xl tracking-tight">
           Admin sign in
         </h1>
 

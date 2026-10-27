@@ -19,6 +19,14 @@ const supabaseHostname = process.env.NEXT_PUBLIC_SUPABASE_URL
 
 const nextConfig: NextConfig = {
   images: {
+    /*
+     * Next 16 requires the quality values the app is allowed to ask for, and the
+     * hero asks for 78: it is a full-bleed photograph carrying the headline, so
+     * it is the one place where 75 is not enough and 90 is a wasted megabyte.
+     * Without this list the optimizer answers 400 and the hero renders with no
+     * photograph behind the copy at all.
+     */
+    qualities: [75, 78],
     remotePatterns: supabaseHostname
       ? [
           {

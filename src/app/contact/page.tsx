@@ -23,13 +23,13 @@ export default function ContactPage() {
     <>
       <main className="flex-1 px-6 pt-24 pb-28 sm:px-10 sm:pt-32 sm:pb-36 lg:px-16">
         <div className="mx-auto max-w-xl">
-          <p className="font-mono text-xs tracking-wider text-muted-foreground uppercase">
-            Contra Costa County, California
-          </p>
-
-          <h1 className="mt-6 font-heading text-3xl font-medium tracking-tight text-balance sm:text-4xl">
+          <h1 className="font-heading text-3xl tracking-tight text-balance sm:text-4xl">
             Not sure if we serve your area?
           </h1>
+
+          <p className="mt-4 text-sm text-muted-foreground">
+            Contra Costa County, California
+          </p>
 
           <p className="mt-6 text-pretty text-muted-foreground">
             Send us a request and we will let you know if caregiver matching is

@@ -50,6 +50,10 @@ When the content is final, delete these comments. -->
 - **Status**: in development
 - **Goal**: An admin rejecting a document says why from a fixed list, with an optional message; the caregiver sees that reason on their credential row and is emailed; and every approve or reject is kept in an append-only history that survives the document being replaced.
 
+## 7.4. Brand identity and site redesign
+- **Status**: in development
+- **Goal**: The identity the designers delivered runs through every screen — the pearl-and-arc mark wherever a logo belongs, the sage and forest palette in place of the framework's blue, Bricolage Grotesque on the words that should stand out over Poppins everywhere else — and the landing page is recomposed around the same copy, which does not change.
+
 ## 8. Membership and billing
 - **Status**: pending
 - **Goal**: A household subscribes for a flat monthly fee and the platform tracks whether it is active.

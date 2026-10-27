@@ -1,0 +1,75 @@
+/* Perla Care brand book styles. Tokens mirror the brand palette. */
+:root {
+  --very-light-sage: #D4E2CF;
+  --soft-sage: #9DB89A;
+  --sage-text: #4F6E55;
+  --forest: #2E4636;
+  --gold: #E0A93B;
+  --white: #FFFFFF;
+  --pearl-highlight: #F5E6C6;
+
+  --font-display: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Nunito", "Helvetica Neue", Arial, sans-serif;
+
+  --radius-card: 24px;
+  --radius-tile: 18px;
+  --radius-swatch: 10px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--forest);
+  background: var(--white);
+}
+
+main { max-width: 960px; margin: 0 auto; padding: 48px 24px 96px; }
+section { margin-top: 64px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.01em; line-height: 1.15; margin: 0 0 12px; }
+h1 { font-size: clamp(2rem, 5vw, 3rem); }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.125rem; }
+p { margin: 0 0 12px; max-width: 68ch; }
+code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.9em; background: var(--very-light-sage); padding: 1px 6px; border-radius: 6px; }
+pre { background: var(--forest); color: var(--very-light-sage); padding: 20px; border-radius: 16px; overflow-x: auto; font-size: 0.85rem; line-height: 1.5; }
+pre code { background: none; padding: 0; }
+
+.intro { background: var(--very-light-sage); border-radius: var(--radius-card); padding: 40px; display: grid; gap: 24px; justify-items: start; }
+.intro img { width: min(260px, 100%); height: auto; }
+
+.grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+.tile { border-radius: var(--radius-tile); padding: 24px; min-height: 160px; display: grid; place-items: center; border: 1px solid var(--very-light-sage); }
+.tile img { max-width: 100%; max-height: 90px; height: auto; }
+.tile--light { background: var(--very-light-sage); border-color: transparent; }
+.tile--dark { background: var(--forest); border-color: transparent; }
+.tile--white { background: var(--white); }
+.tile-caption { font-size: 0.875rem; margin-top: 8px; }
+
+.swatch { border-radius: var(--radius-tile); overflow: hidden; border: 1px solid var(--very-light-sage); }
+.swatch-chip { height: 72px; }
+.swatch-info { padding: 12px 16px; font-size: 0.875rem; }
+.swatch-info strong { display: block; font-family: var(--font-display); font-size: 1rem; }
+.swatch-info span { display: block; }
+
+table { border-collapse: collapse; width: 100%; font-size: 0.9375rem; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--very-light-sage); vertical-align: top; }
+th { font-family: var(--font-display); font-weight: 700; }
+
+ul { padding-left: 1.2em; margin: 0 0 12px; }
+li { margin-bottom: 6px; }
+
+.wordmark { font-family: var(--font-display); font-weight: 800; font-size: 3rem; line-height: 1; margin: 0 0 16px; letter-spacing: -0.01em; }
+.wordmark .perla { color: var(--forest); }
+.wordmark .care { color: var(--sage-text); }
+
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+@media (max-width: 600px) {
+  main { padding: 24px 16px 64px; }
+  .intro { padding: 24px; }
+}

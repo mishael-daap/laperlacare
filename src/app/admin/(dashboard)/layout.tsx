@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { connection } from "next/server";
 
+import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { isAdmin } from "@/lib/admin/is-admin";
 import { signOutAction } from "@/lib/auth/actions";
@@ -50,11 +51,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <div className="flex min-h-svh flex-col">
       <header className="border-b border-border">
         <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 px-6">
-          <Link
-            href="/admin/caregiver"
-            className="font-heading text-sm font-medium tracking-tight"
-          >
-            Perla Care <span className="font-sans text-muted-foreground">Admin</span>
+          <Link href="/admin/caregiver" className="flex items-center gap-3">
+            <Logo className="h-7" />
+            <span className="text-sm text-muted-foreground">Admin</span>
           </Link>
 
           <form action={signOutAction}>

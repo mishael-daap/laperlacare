@@ -13,7 +13,7 @@ export function ChildList({ childProfiles, needs, supports }: ChildListProps) {
     <section className="flex flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col gap-2">
-          <h2 className="font-heading text-xl font-medium tracking-tight">
+          <h2 className="font-heading text-xl tracking-tight">
             Your children
           </h2>
           <p className="text-muted-foreground">

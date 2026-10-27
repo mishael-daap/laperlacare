@@ -164,7 +164,7 @@ export function DocumentReview({
             <input type="hidden" name="reason" value={reason} />
 
             <div className="flex flex-col gap-2">
-              <span className="text-sm font-medium">Reason</span>
+              <span className="text-sm font-semibold">Reason</span>
 
               <DropdownMenu>
                 <DropdownMenuTrigger

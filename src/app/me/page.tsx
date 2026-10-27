@@ -139,7 +139,7 @@ export default async function MePage() {
 
           <section className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
-              <h2 className="font-heading text-xl font-medium tracking-tight">
+              <h2 className="font-heading text-xl tracking-tight">
                 Your weekly availability
               </h2>
               <p className="text-muted-foreground">
@@ -152,7 +152,7 @@ export default async function MePage() {
           </section>
 
           <section className="flex flex-col gap-6">
-            <h2 className="font-heading text-xl font-medium tracking-tight">
+            <h2 className="font-heading text-xl tracking-tight">
               Contact details
             </h2>
             <ContactsSection />

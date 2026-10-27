@@ -147,7 +147,7 @@ export function ProfileHeader({
               />
             ) : (
               <div className="flex items-center gap-2">
-                <h1 className="font-heading text-xl font-semibold tracking-tight md:text-2xl">
+                <h1 className="font-heading text-xl tracking-tight md:text-2xl">
                   {name || "Add your name"}
                 </h1>
                 {profileEditing ? (

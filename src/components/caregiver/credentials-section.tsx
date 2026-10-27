@@ -65,7 +65,7 @@ export function CredentialsSection({ documents }: { documents: CaregiverDocument
     <section className="flex flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col gap-2">
-          <h2 className="font-heading text-xl font-medium tracking-tight">Credentials</h2>
+          <h2 className="font-heading text-xl tracking-tight">Credentials</h2>
           <p className="text-muted-foreground">
             Upload each licence and certificate you hold. An admin reviews every
             document on its own, and families only ever see that it was checked —
@@ -98,7 +98,7 @@ export function CredentialsSection({ documents }: { documents: CaregiverDocument
                   <FileTextIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
 
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">
+                    <p className="truncate text-sm font-semibold">
                       {kindLabel(document.kind)}
                     </p>
                     <p
@@ -120,7 +120,7 @@ export function CredentialsSection({ documents }: { documents: CaregiverDocument
 
                     {state === "rejected" && document.rejection_reason ? (
                       <div className="mt-2 rounded-lg border border-border bg-muted/40 px-3 py-2">
-                        <p className="text-sm font-medium">
+                        <p className="text-sm font-semibold">
                           {rejectionReasonLabel(document.rejection_reason)}
                         </p>
                         {document.rejection_message ? (

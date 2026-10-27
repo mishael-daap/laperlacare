@@ -83,7 +83,7 @@ export function CareSchedule({ windows }: { windows: HouseholdWindow[] }) {
   return (
     <section className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <h2 className="font-heading text-xl font-medium tracking-tight">
+        <h2 className="font-heading text-xl tracking-tight">
           When you need care
         </h2>
         <p className="text-muted-foreground">
@@ -100,7 +100,7 @@ export function CareSchedule({ windows }: { windows: HouseholdWindow[] }) {
               className="flex items-center justify-between gap-3 rounded-lg border border-border px-4 py-3"
             >
               <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
-                <span className="font-medium">{dayLabel(window.day_of_week)}</span>
+                <span className="font-semibold">{dayLabel(window.day_of_week)}</span>
                 <span className="text-sm text-muted-foreground">
                   {shortTime(window.start_time)} to {shortTime(window.end_time)}
                 </span>
