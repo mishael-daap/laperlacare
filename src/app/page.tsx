@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Closing } from "@/components/landing/closing";
 import { Hero } from "@/components/landing/hero";
 import { HowItWorks } from "@/components/landing/how-it-works";
+import { PricingCta } from "@/components/landing/pricing-cta";
 // The membership band is hidden at the client's request. The component still
 // lives at `src/components/landing/membership.tsx`; restore the import with it.
 // import { Membership } from "@/components/landing/membership";
@@ -23,6 +24,7 @@ export default function Home() {
         <Hero />
         <HowItWorks />
         <Reasons />
+        <PricingCta />
         {/*
           Hidden at the client's request: the green membership band. The
           component is untouched, so uncommenting this line and the import above

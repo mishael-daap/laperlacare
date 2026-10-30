@@ -38,6 +38,12 @@ export function Masthead() {
             >
               How it works
             </Link>
+            <Link
+              href="/pricing"
+              className="text-sm text-brand-sage-700 transition-colors hover:text-brand-forest"
+            >
+              Pricing
+            </Link>
             {/* The target section is hidden, so the link is too, rather than
                 left pointing at an id that is no longer on the page. */}
             {/*
