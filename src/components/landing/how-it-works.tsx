@@ -38,23 +38,22 @@ const steps: Step[] = [
 /**
  * The four steps, as a ledger rather than four equal cards.
  *
- * A real ordered list, because the sequence is real. The number is structural,
- * so it is set in the display face and left in its own column; the icon belongs
- * to the title, inline, never in a coloured tile. The heading stays with the
- * reader on a desktop while the four rows pass, which is enough pinning for a
- * process this short.
+ * The title sits centred over the whole page and the ledger runs under it: the
+ * heading states the section and then gets out of the way, which is what a
+ * centred title is for. A real ordered list follows, because the sequence is
+ * real. The number is structural, so it is set in the display face and left in
+ * its own column; the icon belongs to the title, inline, never in a coloured
+ * tile.
  */
 export function HowItWorks() {
   return (
     <section id="how" className="scroll-mt-24 bg-brand-sage-100">
-      <div className="landing-shell grid gap-12 py-28 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-20 lg:py-36">
-        <div className="self-start lg:sticky lg:top-16">
-          <h2 className="section-head font-heading max-w-[12ch]">
-            How Perla Care works
-          </h2>
-        </div>
+      <div className="landing-shell py-28 lg:py-36">
+        <h2 className="section-head font-heading mx-auto max-w-[22ch] text-center">
+          How Perla Care works
+        </h2>
 
-        <ol className="border-t border-brand-sage-300">
+        <ol className="mx-auto mt-14 max-w-[54rem] border-t border-brand-sage-300 lg:mt-20">
           {steps.map(({ title, body, Icon }, index) => (
             <li
               key={title}

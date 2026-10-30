@@ -25,7 +25,7 @@ export function Masthead() {
             aria-label="Perla Care home"
             className="shrink-0 rounded-full"
           >
-            <Logo variant="horizontal" alt="" className="h-7 sm:h-8" priority />
+            <Logo variant="horizontal" alt="" className="h-7 sm:h-8" preload />
           </Link>
 
           <nav
@@ -38,12 +38,16 @@ export function Masthead() {
             >
               How it works
             </Link>
+            {/* The target section is hidden, so the link is too, rather than
+                left pointing at an id that is no longer on the page. */}
+            {/*
             <Link
               href="#membership"
               className="text-sm text-brand-sage-700 transition-colors hover:text-brand-forest"
             >
               Membership
             </Link>
+            */}
           </nav>
 
           <Link

@@ -5,6 +5,7 @@
 /* Hallmark · dropped the hero cut-outs and the final call's second price line · the user retired the photographs and 69 names the echo */
 /* Hallmark · hero-review: in-thread · 4 findings · 4 resolved (the hero measure, the pill's ring, the 56px action, the 57.6px gutter) */
 /* Hallmark · finish-review: in-thread · 5 findings · 4 resolved 1 note (58, the owner's copy) · gap: none */
+/* Hallmark · the client put a photograph back as the hero background and asked for the hero type in forest on it, with no wash over the picture: the photo band under the hero is retired because it was the same picture twice, and 69 names the echo */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -307,8 +308,15 @@
     min-width: 0;
   }
 
+  /*
+   * The three display steps, largest last. `.display-1` is the hero's line and
+   * nothing else uses it; `.display-s` is the close; `.section-head` is every
+   * other section title. Each is a stop on one ladder — 84 / 76 / 64 at
+   * desktop — so a section title can grow without ever catching the close or
+   * the hero, and the page keeps one hierarchy instead of four opinions.
+   */
   .section-head {
-    font-size: clamp(2.25rem, 3.5vw, 3.5rem);
+    font-size: clamp(2.75rem, 4.2vw, 4rem);
     line-height: 1.05;
     letter-spacing: -0.02em;
     overflow-wrap: break-word;
@@ -316,7 +324,7 @@
   }
 
   .display-s {
-    font-size: clamp(2.5rem, 5vw, 3.75rem);
+    font-size: clamp(2.75rem, 5vw, 4.75rem);
     line-height: 1.08;
     letter-spacing: -0.02em;
     overflow-wrap: break-word;
@@ -371,7 +379,7 @@
     --ring: var(--brand-sage-600);
   }
 
-  /* The library photograph takes the theme's warm treatment and an inset keyline. */
+  /* Every photograph takes the theme's warm treatment. */
   .photo-warm {
     filter: sepia(0.12) saturate(1.06) contrast(1.02);
   }

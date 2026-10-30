@@ -61,7 +61,8 @@ type LogoProps = {
    */
   alt?: string;
   className?: string;
-  priority?: boolean;
+  /** Next 16 renamed `priority` to `preload`; the mark is above the fold. */
+  preload?: boolean;
 };
 
 export function Logo({
@@ -69,7 +70,7 @@ export function Logo({
   tone = "default",
   alt = "Perla Care",
   className,
-  priority = false,
+  preload = false,
 }: LogoProps) {
   const { width, height } = RATIO[variant];
 
@@ -79,7 +80,7 @@ export function Logo({
       alt={alt}
       width={width}
       height={height}
-      priority={priority}
+      preload={preload}
       className={cn(DEFAULT_HEIGHT[variant], "w-auto", className)}
     />
   );

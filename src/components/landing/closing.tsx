@@ -1,26 +1,18 @@
-import { Smile } from "@/components/brand/smile";
-
 import { Action } from "./action";
 
 /**
- * The close: the action once more, with the smile above it and nothing else.
+ * The close: the action once more and nothing else.
  *
  * The price already had its section. This one does not say it again; it says
- * what happens next, which is the only thing left to decide. The small smile is
- * the hero's mark returning at the other end of the page, without its pearl,
- * because the pearl belonged to the opening.
+ * what happens next, which is the only thing left to decide. The mark already
+ * sits in the masthead at the top of the page; repeating it here was one
+ * ornament too many, so the words and the button are the whole close.
  */
 export function Closing() {
   return (
     <section className="bg-card">
       <div className="landing-shell flex flex-col items-center py-28 text-center lg:py-40">
-        <Smile
-          className="h-12 w-56 text-brand-sage-300"
-          pearl={false}
-          strokeWidth={6}
-        />
-
-        <h2 className="display-s font-heading mt-8 max-w-[22ch]">
+        <h2 className="display-s font-heading max-w-[22ch]">
           Ready to find your caregiver
         </h2>
 
