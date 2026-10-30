@@ -4,7 +4,6 @@ import { CheckIcon, ChevronDownIcon, PlusIcon, UploadIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
 
-import { useProfileDraft } from "@/components/caregiver/profile-draft";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -47,11 +46,17 @@ const MAX_BYTES = 5 * 1024 * 1024;
 export function CredentialDialog({
   mode,
   kind: fixedKind,
+  userId,
 }: {
   mode: "add" | "replace";
   kind?: DocumentKind;
+  /**
+   * Passed in rather than read from a draft. The credentials section now lives
+   * on `/application`, which has its own draft provider, and reaching into the
+   * profile's for one field was the only thing tying the two pages together.
+   */
+  userId: string;
 }) {
-  const { userId } = useProfileDraft();
   const router = useRouter();
   const fileInput = useRef<HTMLInputElement>(null);
 

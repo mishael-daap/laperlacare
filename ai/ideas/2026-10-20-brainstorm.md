@@ -1,11 +1,22 @@
 # Brainstorm, 2026-10-20
 
-The first batch, moved out of the old single-file `ai/ideas.md`. Several of these
-have since graduated: needs and supports became roadmap 7.1 and 7.2, and
-per-document review shipped with 7.2.
+The first batch, moved out of the old single-file `ai/ideas.md`. All six have
+since shipped: needs and supports, availability, gender, and the child profile in
+[roadmap 7.1](../roadmap.md#71-parent-household-and-child-profiles); caregiver age
+range and per-document review in
+[roadmap 7.2](../roadmap.md#72-caregiver-capabilities-and-credentials) and
+[roadmap 7.3](../roadmap.md#73-document-rejection-reasons-and-review-history).
+Each entry's status line says which, and what was deferred.
 
 ---
 ## 2026-10-20 — Needs and supports checklist
+
+**Status** completed — [roadmap 7.1](../roadmap.md#71-parent-household-and-child-profiles)
+(parent ticks needs and supports per child) and
+[roadmap 7.2](../roadmap.md#72-caregiver-capabilities-and-credentials) (caregiver
+ticks the same lists). Settled as two seeded reference tables and a closed set, no
+free text, nothing required. Matching by overlap is still unbuilt, because the
+catalog and search are suspended.
 
 A fixed list of checkboxes, split into two kinds:
 
@@ -31,6 +42,12 @@ Open questions to settle before this can become a spec:
 - Matching by any overlap, or by all of a child's needs being covered?
 
 ## 2026-10-20 — Parent-side availability request
+
+**Status** completed — [roadmap 7.1](../roadmap.md#71-parent-household-and-child-profiles),
+as the household's care windows. Settled as a standing weekly pattern of day plus
+start and end, belonging to the household rather than a child, stored as wall-clock
+times, with overlap allowed. The timezone decision, and whether overlap or
+containment counts as a match, are part of the suspended search feature.
 
 A section on the parent's side where they record the days and hours they want a
 caregiver around. **Add days** opens a day-of-week picker and a time range (e.g.
@@ -66,6 +83,12 @@ Open questions:
 
 ## 2026-10-20 — Gender preference and caregiver gender
 
+**Status** completed — [roadmap 7.1](../roadmap.md#71-parent-household-and-child-profiles)
+(household preference: female, male, no preference, defaulting to no preference)
+and [roadmap 7.2](../roadmap.md#72-caregiver-capabilities-and-credentials)
+(caregiver records their own). Settled as a preference, on the household, from a
+closed set. The legal review this entry asks for is still owed.
+
 The parent picks a preferred caregiver gender; the caregiver records their own.
 Both are already named in `ai/overview.md` and the roadmap's search filters, but
 neither exists in the schema yet (`caregivers` has no gender column).
@@ -87,6 +110,13 @@ Open questions:
   for the legal review already owed by the overview's constraints section.
 
 ## 2026-10-20 — The child profile: first name, age, needs, support
+
+**Status** completed — [roadmap 7.1](../roadmap.md#71-parent-household-and-child-profiles).
+Settled as any number of children, each with full name, date of birth with age
+derived, needs and supports from the fixed lists, and an optional notes field
+capped at 1,000 characters that is household-only in RLS and never readable by an
+admin or a catalog query. Still open from this entry: caregivers cannot see it yet,
+because the catalog is suspended.
 
 Each child gets a free-text field where the parent can describe them in their own
 words, and a parent can add more than one child.
@@ -148,6 +178,11 @@ Open questions:
 
 ## 2026-10-20 — Caregiver age range
 
+**Status** completed — [roadmap 7.2](../roadmap.md#72-caregiver-capabilities-and-credentials),
+as `age_min` and `age_max` in whole years, optional, validated as an ordered pair.
+The bands question is deferred rather than answered: a single range cannot say
+"0–5 and adults, not 6–17".
+
 A caregiver records the ages they are comfortable working with, e.g. 2–5.
 
 Notes:
@@ -171,6 +206,14 @@ Open questions:
   optional gender.
 
 ## 2026-10-20 — Licences and certifications, reviewed one by one
+
+**Status** completed — [roadmap 7.2](../roadmap.md#72-caregiver-capabilities-and-credentials)
+and [roadmap 7.3](../roadmap.md#73-document-rejection-reasons-and-review-history).
+Settled as five document kinds, one document per kind, `expires_at` added, per-kind
+review replacing the caregiver-level approval, status derived from the documents,
+and a rejection that names a reason from a fixed list and emails the caregiver.
+Deferred: more than one document per kind, marking a kind as required, and expiry
+reminders.
 
 Caregivers hold licences and certifications — driver's licence, CPR, BT
 certification — upload the document for each, and the admin approves **each

@@ -39,7 +39,13 @@ import type { CaregiverDocument } from "@/lib/caregiver/get-caregiver-profile";
  * would mean a signed URL that expires while the page is open; the admin screen
  * is the only place a document is read.
  */
-export function CredentialsSection({ documents }: { documents: CaregiverDocument[] }) {
+export function CredentialsSection({
+  documents,
+  userId,
+}: {
+  documents: CaregiverDocument[];
+  userId: string;
+}) {
   const [pending, startTransition] = useTransition();
   const [removing, setRemoving] = useState<CaregiverDocument | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -73,7 +79,7 @@ export function CredentialsSection({ documents }: { documents: CaregiverDocument
           </p>
         </div>
 
-        <CredentialDialog mode="add" />
+        <CredentialDialog mode="add" userId={userId} />
       </div>
 
       {documents.length === 0 ? (
@@ -149,6 +155,7 @@ export function CredentialsSection({ documents }: { documents: CaregiverDocument
                   <CredentialDialog
                     mode="replace"
                     kind={document.kind as DocumentKind}
+                    userId={userId}
                   />
 
                   <Button

@@ -62,6 +62,39 @@ export type CaregiverDetail = {
   created_at: string;
   need_slugs: string[];
   support_slugs: string[];
+  hourly_rate: number | null;
+  counties: string[];
+  other_county: string | null;
+  regional_center_worker: boolean | null;
+  regional_center_name: string | null;
+  earliest_start_date: string | null;
+  languages: string[];
+  other_language: string | null;
+  car_and_insurance: boolean | null;
+  willing_to_drive: boolean | null;
+  max_travel_miles: number | null;
+  pets: string | null;
+  non_smoker: boolean | null;
+  legal_name: string | null;
+  address_street: string | null;
+  address_city: string | null;
+  address_postal_code: string | null;
+  referral_source: string | null;
+  conditions: string[];
+  other_condition: string | null;
+  why_special_needs: string | null;
+  difficult_moment: string | null;
+  background_check_agreed: boolean;
+  signature_name: string | null;
+  signed_at: string | null;
+  signed_statement_version: string | null;
+  interviewed_at: string | null;
+  interview_outcome: string | null;
+  trustline_status: string | null;
+  approved_at: string | null;
+  approved_by: string | null;
+  declined_at: string | null;
+  declined_reason: string | null;
 };
 
 export function parseStatus(value: string | string[] | undefined): StatusBucket {
@@ -137,8 +170,17 @@ export async function getCaregiverForReview(
   supabase: SupabaseClient<Database>,
   userId: string,
 ) {
-  const [detail, contacts, documents, availability, needs, supports, history] =
-    await Promise.all([
+  const [
+    detail,
+    contacts,
+    documents,
+    availability,
+    needs,
+    supports,
+    history,
+    experience,
+    references,
+  ] = await Promise.all([
     supabase.rpc("admin_caregiver_detail", { p_user_id: userId }),
     supabase.from("contacts").select("*").eq("user_id", userId).order("created_at"),
     supabase
@@ -160,6 +202,16 @@ export async function getCaregiverForReview(
       .eq("caregiver_id", userId)
       .order("reviewed_at", { ascending: false })
       .limit(50),
+    supabase
+      .from("caregiver_experience")
+      .select("*")
+      .eq("caregiver_id", userId)
+      .order("position"),
+    supabase
+      .from("caregiver_references")
+      .select("*")
+      .eq("caregiver_id", userId)
+      .order("position"),
   ]);
 
   if (detail.error) throw new Error(`Could not load the caregiver: ${detail.error.message}`);
@@ -206,5 +258,7 @@ export async function getCaregiverForReview(
     availability: availability.data ?? [],
     needs: needs.data ?? [],
     supports: supports.data ?? [],
+    experience: experience.data ?? [],
+    references: references.data ?? [],
   };
 }

@@ -4,6 +4,13 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { capabilitiesInput } from "@/lib/caregiver/capabilities";
+import { CONTACT_METHODS } from "@/lib/caregiver/answers";
+import {
+  homeEnvironmentInput,
+  languagesInput,
+  transportationInput,
+  workDetailsInput,
+} from "@/lib/caregiver/application";
 import { DOCUMENT_KINDS, type DocumentKind } from "@/lib/caregiver/credentials";
 import { createClient } from "@/lib/supabase/server";
 
@@ -47,7 +54,7 @@ export async function saveContactsAction(
     label: string;
     phone: string;
     email: string;
-    address: string;
+    preferredContactMethod: string;
   }[],
 ): Promise<SaveState> {
   const { supabase, userId } = await caller();
@@ -79,7 +86,13 @@ export async function saveContactsAction(
       label: contact.label.trim() || "Contact",
       phone: contact.phone.trim() || null,
       email: contact.email.trim() || null,
-      address: contact.address.trim() || null,
+      // Not trimmed to null: the column is not null and defaults to phone, so an
+      // unexpected value falls back to the default rather than failing the save.
+      preferred_contact_method: CONTACT_METHODS.some(
+        (method) => method.value === contact.preferredContactMethod,
+      )
+        ? contact.preferredContactMethod
+        : "phone",
     };
 
     const { error } = contact.id
@@ -311,6 +324,137 @@ export type AvailabilityBlock = {
   start_time: string;
   end_time: string;
 };
+
+/**
+ * The four sections below save on their own, one action each.
+ *
+ * They could share a single action and a single transaction, but they are not
+ * one thing: a caregiver changing their rate should not be blocked by a
+ * malformed travel distance in a section they are not looking at, and four
+ * small writes that can fail independently are easier to explain than one that
+ * fails as a whole with the first bad field named.
+ *
+ * Each is a single `update` on the caregiver's own row, so none of them needs a
+ * database function. The RLS policy already scopes the row, and the lock trigger
+ * already refuses a write to a submitted application.
+ */
+
+/** The label a caregiver has to give when they tick Other. */
+function otherLabel(values: string[], label: string) {
+  return values.includes("other") ? label.trim() || null : null;
+}
+
+export async function saveWorkDetailsAction(input: unknown): Promise<SaveState> {
+  const parsed = workDetailsInput.safeParse(input);
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Check the form and try again." };
+  }
+
+  const { supabase, userId } = await caller();
+
+  const { error } = await supabase
+    .from("caregivers")
+    .update({
+      hourly_rate: parsed.data.hourlyRate,
+      counties: parsed.data.counties,
+      other_county: otherLabel(parsed.data.counties, parsed.data.otherCounty),
+      regional_center_worker: parsed.data.regionalCenterWorker,
+      // A centre name with no tick is a leftover, not an answer.
+      regional_center_name: parsed.data.regionalCenterWorker
+        ? parsed.data.regionalCenterName.trim() || null
+        : null,
+      earliest_start_date: parsed.data.earliestStartDate,
+    })
+    .eq("user_id", userId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/me");
+  revalidatePath("/onboarding");
+  return { ok: true };
+}
+
+export async function saveLanguagesAction(input: unknown): Promise<SaveState> {
+  const parsed = languagesInput.safeParse(input);
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Check the form and try again." };
+  }
+
+  const { supabase, userId } = await caller();
+
+  const { error } = await supabase
+    .from("caregivers")
+    .update({
+      languages: parsed.data.languages,
+      other_language: otherLabel(parsed.data.languages, parsed.data.otherLanguage),
+    })
+    .eq("user_id", userId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/me");
+  revalidatePath("/onboarding");
+  return { ok: true };
+}
+
+export async function saveTransportationAction(input: unknown): Promise<SaveState> {
+  const parsed = transportationInput.safeParse(input);
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Check the form and try again." };
+  }
+
+  const { supabase, userId } = await caller();
+
+  const { error } = await supabase
+    .from("caregivers")
+    .update({
+      car_and_insurance: parsed.data.carAndInsurance,
+      willing_to_drive: parsed.data.willingToDrive,
+      max_travel_miles: parsed.data.maxTravelMiles,
+    })
+    .eq("user_id", userId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/me");
+  revalidatePath("/onboarding");
+  return { ok: true };
+}
+
+export async function saveHomeEnvironmentAction(input: unknown): Promise<SaveState> {
+  const parsed = homeEnvironmentInput.safeParse(input);
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Check the form and try again." };
+  }
+
+  const { supabase, userId } = await caller();
+
+  const { error } = await supabase
+    .from("caregivers")
+    .update({
+      pets: parsed.data.pets,
+      non_smoker: parsed.data.nonSmoker,
+    })
+    .eq("user_id", userId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/me");
+  revalidatePath("/onboarding");
+  return { ok: true };
+}
 
 /**
  * The board is saved whole, which is what the data model specified: clear the

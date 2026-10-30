@@ -7,11 +7,26 @@
  * with `private.caregiver_status`, and this only turns the answer into words.
  */
 
+/**
+ * Every kind of credential the app accepts, in the order the page offers them.
+ *
+ * This list is the certification section of the paper application. It widened
+ * from five to eight when the application form arrived: a licence and a CPR card
+ * stopped being "certifications" with a file attached and became credentials in
+ * their own right, because a credential is what the app reads to answer a
+ * question like "can this person drive".
+ *
+ * It is the same eight values as the `kind` check constraint on
+ * `caregiver_documents`. They have to change together.
+ */
 export const DOCUMENT_KINDS = [
   { value: "background_check", label: "Background check" },
   { value: "cpr", label: "CPR" },
+  { value: "first_aid", label: "First Aid" },
+  { value: "rbt", label: "Registered Behavior Technician (RBT)" },
+  { value: "cna_nursing", label: "CNA or nursing credential" },
+  { value: "trustline", label: "TrustLine" },
   { value: "drivers_licence", label: "Driver's licence" },
-  { value: "certification", label: "Certification" },
   { value: "other", label: "Other" },
 ] as const;
 
@@ -63,8 +78,11 @@ export function kindLabel(kind: string) {
 const KIND_IN_SENTENCE: Record<string, string> = {
   background_check: "background check",
   cpr: "CPR",
+  first_aid: "First Aid",
+  rbt: "RBT",
+  cna_nursing: "CNA or nursing credential",
+  trustline: "TrustLine",
   drivers_licence: "driver's licence",
-  certification: "certification",
   other: "document",
 };
 
@@ -203,7 +221,7 @@ export function statusSentence(
   }
 
   if (status === "approved") {
-    return "Every document is approved, so families can see your profile.";
+    return "Your profile is approved. Each credential below is reviewed on its own, so a lapsed one only affects that row.";
   }
 
   return null;

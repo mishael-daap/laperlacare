@@ -28,6 +28,8 @@ export async function getCaregiverProfile(
     needs,
     supports,
     status,
+    experience,
+    references,
   ] = await Promise.all([
     supabase.from("caregivers").select("*").eq("user_id", userId).maybeSingle(),
     supabase.from("contacts").select("*").eq("user_id", userId).order("created_at"),
@@ -47,6 +49,16 @@ export async function getCaregiverProfile(
     supabase.from("needs").select("id, slug, label, position").order("position"),
     supabase.from("supports").select("id, slug, label, position").order("position"),
     supabase.rpc("my_caregiver_status"),
+    supabase
+      .from("caregiver_experience")
+      .select("*")
+      .eq("caregiver_id", userId)
+      .order("position"),
+    supabase
+      .from("caregiver_references")
+      .select("id, full_name, relationship, organisation, phone, email, known_for, position, checked_at, checked_outcome")
+      .eq("caregiver_id", userId)
+      .order("position"),
   ]);
 
   const needRows = needs.data ?? [];
@@ -60,6 +72,8 @@ export async function getCaregiverProfile(
     contacts: contacts.data ?? [],
     documents: documents.data ?? [],
     availability: availability.data ?? [],
+    experience: experience.data ?? [],
+    references: references.data ?? [],
     needSlugs: (needTags.data ?? [])
       .map((tag) => needSlugById.get(tag.need_id))
       .filter((slug): slug is string => Boolean(slug)),

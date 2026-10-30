@@ -17,6 +17,15 @@ const HOUSEHOLD = "/household";
 /** Where a caregiver lands instead. Their own page. */
 const PROFILE = "/me";
 
+/**
+ * Where a caregiver goes before the application is submitted.
+ *
+ * A half-finished profile is the one thing a new caregiver has to finish, and
+ * sending them to `/me` — a page of nine sections with no indication that
+ * anything is missing — is how an application stalls at four of sixteen.
+ */
+const ONBOARDING = "/onboarding";
+
 /** Where an admin lands. The review queue. */
 const ADMIN = "/admin/caregiver";
 
@@ -63,7 +72,21 @@ function safeNext(value: string | null | undefined, fallback: string) {
  */
 async function landingPath(supabase: Awaited<ReturnType<typeof createClient>>) {
   if (await isAdmin(supabase)) return ADMIN;
-  return (await isCaregiver(supabase)) ? PROFILE : HOUSEHOLD;
+
+  if (!(await isCaregiver(supabase))) return HOUSEHOLD;
+
+  // A submitted application is done being filled in; from then on the profile is
+  // the useful page. Until then the guided pass is.
+  const { data } = await supabase.auth.getClaims();
+  const userId = data?.claims?.sub;
+
+  const { data: profile } = await supabase
+    .from("caregivers")
+    .select("submitted_at")
+    .eq("user_id", userId ?? "")
+    .maybeSingle();
+
+  return profile?.submitted_at ? PROFILE : ONBOARDING;
 }
 
 export async function signUpAction(
@@ -148,7 +171,7 @@ export async function caregiverSignUpAction(
   }
 
   await ensureCaregiverRow(supabase, data.user.id);
-  redirect(PROFILE);
+  redirect(ONBOARDING);
 }
 
 export async function signInAction(

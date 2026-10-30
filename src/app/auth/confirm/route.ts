@@ -50,7 +50,18 @@ export async function GET(request: NextRequest) {
     store.delete("signup_intent");
   }
 
-  const fallback = (await isCaregiver(supabase)) ? "/me" : "/caregivers";
+  let fallback = "/caregivers";
+
+  if (await isCaregiver(supabase)) {
+    const { data: claims } = await supabase.auth.getClaims();
+    const { data: profile } = await supabase
+      .from("caregivers")
+      .select("submitted_at")
+      .eq("user_id", claims?.claims?.sub ?? "")
+      .maybeSingle();
+
+    fallback = profile?.submitted_at ? "/me" : "/onboarding";
+  }
 
   const next =
     requested.startsWith("/") && !requested.startsWith("//") ? requested : fallback;

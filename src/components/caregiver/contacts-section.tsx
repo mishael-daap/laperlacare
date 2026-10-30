@@ -1,21 +1,31 @@
 "use client";
 
-import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon, PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
 
 import { useProfileDraft } from "@/components/caregiver/profile-draft";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { CONTACT_METHODS, labelFor } from "@/lib/caregiver/answers";
 
 /**
  * Every way a family can reach this caregiver, as cards rather than a form.
  *
  * The phone number is what a parent actually wants, so it leads: full contrast,
- * larger. Email and address sit under it at one shared, quieter level, because
- * they are useful but secondary and should not compete with the thing people
- * came for.
+ * larger. Email sits under it at a quieter level, and the preferred contact
+ * method says which of the two to use — because a number nobody should ring is
+ * worse than no number at all.
+ *
+ * There is no address here. The home address is a vetting fact and lives on the
+ * application; a caregiver's street is not something a family needs.
  *
  * The fields only appear once a card is opened with its pencil. A screen of
  * inputs says "fill this in"; a card says "here is your contact", which is what
@@ -91,13 +101,40 @@ export function ContactsSection() {
                     />
                   </div>
 
-                  <div className="flex flex-col gap-2">
-                    <Label htmlFor={`address-${index}`}>Address</Label>
-                    <Input
-                      id={`address-${index}`}
-                      value={contact.address}
-                      onChange={(event) => update(index, { address: event.target.value })}
-                    />
+                  <div className="flex flex-col gap-2 sm:col-span-2">
+                    <Label>Preferred contact method</Label>
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        render={
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="w-full justify-between sm:w-56"
+                          />
+                        }
+                      >
+                        {labelFor(CONTACT_METHODS, contact.preferredContactMethod) ??
+                          "Phone call"}
+                        <ChevronDownIcon />
+                      </DropdownMenuTrigger>
+
+                      <DropdownMenuContent>
+                        {CONTACT_METHODS.map((method) => (
+                          <DropdownMenuItem
+                            key={method.value}
+                            onClick={() =>
+                              update(index, { preferredContactMethod: method.value })
+                            }
+                          >
+                            {method.label}
+                            {contact.preferredContactMethod === method.value ? (
+                              <CheckIcon className="ml-auto" />
+                            ) : null}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
               </div>
@@ -124,17 +161,18 @@ export function ContactsSection() {
                     </p>
                   ) : null}
 
-                  {contact.address ? (
-                    <p className="text-sm break-words text-muted-foreground">
-                      {contact.address}
-                    </p>
-                  ) : null}
-
-                  {!contact.email && !contact.address ? (
+                  {contact.phone || contact.email ? (
                     <p className="text-sm text-muted-foreground">
-                      No email or address yet
+                      Prefers {(
+                        labelFor(CONTACT_METHODS, contact.preferredContactMethod) ??
+                        "a phone call"
+                      ).toLowerCase()}
                     </p>
-                  ) : null}
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      No phone number or email yet
+                    </p>
+                  )}
                 </div>
 
                 {profileEditing ? (

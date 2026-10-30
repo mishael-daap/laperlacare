@@ -47,11 +47,22 @@ export async function GET(request: NextRequest) {
   // Admin first, for the same reason as the password path: an admin holds a row
   // in `admins`, which is a deliberate appointment rather than an accident of
   // also being a caregiver.
-  const fallback = (await isAdmin(supabase))
-    ? "/admin/caregiver"
-    : (await isCaregiver(supabase))
-      ? "/me"
-      : "/household";
+  // A caregiver who has not submitted lands on the guided pass rather than on a
+  // profile page with no indication of what is missing.
+  let fallback = "/household";
+
+  if (await isAdmin(supabase)) {
+    fallback = "/admin/caregiver";
+  } else if (await isCaregiver(supabase)) {
+    const { data: claims } = await supabase.auth.getClaims();
+    const { data: profile } = await supabase
+      .from("caregivers")
+      .select("submitted_at")
+      .eq("user_id", claims?.claims?.sub ?? "")
+      .maybeSingle();
+
+    fallback = profile?.submitted_at ? "/me" : "/onboarding";
+  }
 
   // Same-site paths only, or a crafted link could bounce someone to another
   // site straight after signing in here.

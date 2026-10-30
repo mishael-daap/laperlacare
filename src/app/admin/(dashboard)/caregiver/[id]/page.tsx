@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { cn } from "cn";
 
+import { ApplicationPanel } from "@/components/admin/application-panel";
 import { DocumentReview } from "@/components/admin/document-review";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { Badge } from "@/components/ui/badge";
@@ -13,9 +14,10 @@ import { buttonVariants } from "@/components/ui/button";
 import { formatDate, formatTime } from "@/lib/admin/format";
 import { getCaregiverForReview } from "@/lib/admin/queries";
 import { formatAge } from "@/lib/age";
+import { CONTACT_METHODS, labelFor } from "@/lib/caregiver/answers";
 import { DAYS } from "@/lib/caregiver/availability";
 import { genderLabel } from "@/lib/caregiver/capabilities";
-import { completeness } from "@/lib/caregiver/completeness";
+import { progress, sections } from "@/lib/caregiver/completeness";
 import {
   credentialLabel,
   credentialState,
@@ -59,23 +61,52 @@ export default async function AdminCaregiverPage(
     notFound();
   }
 
-  const { caregiver, contacts, documents, history, availability, needs, supports } = review;
+  const {
+    caregiver,
+    contacts,
+    documents,
+    history,
+    availability,
+    needs,
+    supports,
+    experience,
+    references,
+  } = review;
 
-  const items = completeness({
+  const items = sections({
     displayName: caregiver.display_name,
     bio: caregiver.bio,
-    avatarPath: caregiver.avatar_path,
     dateOfBirth: caregiver.date_of_birth,
     gender: caregiver.gender,
-    workingAges: caregiver.age_min !== null && caregiver.age_max !== null,
-    contactCount: contacts.length,
+    hourlyRate: caregiver.hourly_rate,
+    counties: caregiver.counties,
+    ageMin: caregiver.age_min,
+    ageMax: caregiver.age_max,
+    languages: caregiver.languages,
+    carAndInsurance: caregiver.car_and_insurance,
+    willingToDrive: caregiver.willing_to_drive,
+    maxTravelMiles: caregiver.max_travel_miles,
+    pets: caregiver.pets,
+    nonSmoker: caregiver.non_smoker,
     needCount: caregiver.need_slugs.length,
     supportCount: caregiver.support_slugs.length,
-    documentCount: documents.length,
     availabilityCount: availability.length,
+    contactCount: contacts.length,
+    legalName: caregiver.legal_name,
+    addressStreet: caregiver.address_street,
+    addressCity: caregiver.address_city,
+    addressPostalCode: caregiver.address_postal_code,
+    experienceCount: experience.length,
+    conditions: caregiver.conditions,
+    referenceCount: references.length,
+    whySpecialNeeds: caregiver.why_special_needs,
+    difficultMoment: caregiver.difficult_moment,
+    credentialCount: documents.length,
+    backgroundCheckAgreed: caregiver.background_check_agreed,
+    signatureName: caregiver.signature_name,
   });
 
-  const done = items.filter((item) => item.done).length;
+  const done = progress(items).done;
 
   const avatarSrc = caregiver.avatar_path
     ? `${env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${caregiver.avatar_path}`
@@ -228,6 +259,12 @@ export default async function AdminCaregiverPage(
         </div>
       </section>
 
+      <ApplicationPanel
+        caregiver={caregiver}
+        experience={experience}
+        references={references}
+      />
+
       <section className="flex flex-col gap-4">
         <h2 className="font-heading text-lg tracking-tight">Contact details</h2>
 
@@ -247,9 +284,9 @@ export default async function AdminCaregiverPage(
                 {contact.email ? (
                   <p className="text-sm text-muted-foreground">{contact.email}</p>
                 ) : null}
-                {contact.address ? (
-                  <p className="text-sm text-muted-foreground">{contact.address}</p>
-                ) : null}
+                <p className="text-sm text-muted-foreground">
+                  Prefers {labelFor(CONTACT_METHODS, contact.preferred_contact_method)?.toLowerCase()}
+                </p>
               </li>
             ))}
           </ul>

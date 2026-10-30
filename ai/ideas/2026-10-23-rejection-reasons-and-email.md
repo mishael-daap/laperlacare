@@ -2,6 +2,11 @@
 
 **Captured** 2026-10-23, the same session the per-document review shipped.
 
+**Status** completed — built as [roadmap 7.3, Document rejection reasons and review
+history](../roadmap.md#73-document-rejection-reasons-and-review-history). The
+reasons, the optional message, the email, and the append-only history all shipped;
+the open questions below were settled in `ai/features/document-rejection-reasons/`.
+
 ## The idea
 
 When an admin rejects a document, the rejection currently says nothing. The

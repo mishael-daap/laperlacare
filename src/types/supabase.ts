@@ -196,6 +196,50 @@ export type Database = {
           },
         ]
       }
+      caregiver_experience: {
+        Row: {
+          ages_and_needs: string | null
+          caregiver_id: string
+          created_at: string
+          employer: string
+          ended_on: string | null
+          id: string
+          position: number
+          role: string
+          started_on: string
+        }
+        Insert: {
+          ages_and_needs?: string | null
+          caregiver_id: string
+          created_at?: string
+          employer: string
+          ended_on?: string | null
+          id?: string
+          position: number
+          role: string
+          started_on: string
+        }
+        Update: {
+          ages_and_needs?: string | null
+          caregiver_id?: string
+          created_at?: string
+          employer?: string
+          ended_on?: string | null
+          id?: string
+          position?: number
+          role?: string
+          started_on?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "caregiver_experience_caregiver_id_fkey"
+            columns: ["caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       caregiver_needs: {
         Row: {
           caregiver_id: string
@@ -223,6 +267,62 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "needs"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      caregiver_references: {
+        Row: {
+          caregiver_id: string
+          checked_at: string | null
+          checked_by: string | null
+          checked_outcome: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          known_for: string | null
+          organisation: string | null
+          phone: string | null
+          position: number
+          relationship: string
+        }
+        Insert: {
+          caregiver_id: string
+          checked_at?: string | null
+          checked_by?: string | null
+          checked_outcome?: string | null
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          known_for?: string | null
+          organisation?: string | null
+          phone?: string | null
+          position: number
+          relationship: string
+        }
+        Update: {
+          caregiver_id?: string
+          checked_at?: string | null
+          checked_by?: string | null
+          checked_outcome?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          known_for?: string | null
+          organisation?: string | null
+          phone?: string | null
+          position?: number
+          relationship?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "caregiver_references_caregiver_id_fkey"
+            columns: ["caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -258,40 +358,148 @@ export type Database = {
       }
       caregivers: {
         Row: {
+          address_city: string | null
+          address_postal_code: string | null
+          address_street: string | null
           age_max: number | null
           age_min: number | null
+          approved_at: string | null
+          approved_by: string | null
           avatar_path: string | null
+          background_check_agreed: boolean
           bio: string | null
+          car_and_insurance: boolean | null
+          conditions: string[]
+          counties: string[]
           created_at: string
           date_of_birth: string | null
+          declined_at: string | null
+          declined_by: string | null
+          declined_reason: string | null
+          difficult_moment: string | null
           display_name: string | null
+          earliest_start_date: string | null
           gender: string | null
+          hourly_rate: number | null
+          interview_outcome: string | null
+          interviewed_at: string | null
+          languages: string[]
+          legal_name: string | null
+          max_travel_miles: number | null
+          non_smoker: boolean | null
+          other_condition: string | null
+          other_county: string | null
+          other_language: string | null
+          pets: string | null
+          referral_source: string | null
+          regional_center_name: string | null
+          regional_center_worker: boolean | null
+          signature_name: string | null
+          signed_at: string | null
+          signed_ip: unknown
+          signed_statement_version: string | null
+          signed_user_agent: string | null
           submitted_at: string | null
+          trustline_status: string | null
           user_id: string
+          why_special_needs: string | null
+          willing_to_drive: boolean | null
         }
         Insert: {
+          address_city?: string | null
+          address_postal_code?: string | null
+          address_street?: string | null
           age_max?: number | null
           age_min?: number | null
+          approved_at?: string | null
+          approved_by?: string | null
           avatar_path?: string | null
+          background_check_agreed?: boolean
           bio?: string | null
+          car_and_insurance?: boolean | null
+          conditions?: string[]
+          counties?: string[]
           created_at?: string
           date_of_birth?: string | null
+          declined_at?: string | null
+          declined_by?: string | null
+          declined_reason?: string | null
+          difficult_moment?: string | null
           display_name?: string | null
+          earliest_start_date?: string | null
           gender?: string | null
+          hourly_rate?: number | null
+          interview_outcome?: string | null
+          interviewed_at?: string | null
+          languages?: string[]
+          legal_name?: string | null
+          max_travel_miles?: number | null
+          non_smoker?: boolean | null
+          other_condition?: string | null
+          other_county?: string | null
+          other_language?: string | null
+          pets?: string | null
+          referral_source?: string | null
+          regional_center_name?: string | null
+          regional_center_worker?: boolean | null
+          signature_name?: string | null
+          signed_at?: string | null
+          signed_ip?: unknown
+          signed_statement_version?: string | null
+          signed_user_agent?: string | null
           submitted_at?: string | null
+          trustline_status?: string | null
           user_id: string
+          why_special_needs?: string | null
+          willing_to_drive?: boolean | null
         }
         Update: {
+          address_city?: string | null
+          address_postal_code?: string | null
+          address_street?: string | null
           age_max?: number | null
           age_min?: number | null
+          approved_at?: string | null
+          approved_by?: string | null
           avatar_path?: string | null
+          background_check_agreed?: boolean
           bio?: string | null
+          car_and_insurance?: boolean | null
+          conditions?: string[]
+          counties?: string[]
           created_at?: string
           date_of_birth?: string | null
+          declined_at?: string | null
+          declined_by?: string | null
+          declined_reason?: string | null
+          difficult_moment?: string | null
           display_name?: string | null
+          earliest_start_date?: string | null
           gender?: string | null
+          hourly_rate?: number | null
+          interview_outcome?: string | null
+          interviewed_at?: string | null
+          languages?: string[]
+          legal_name?: string | null
+          max_travel_miles?: number | null
+          non_smoker?: boolean | null
+          other_condition?: string | null
+          other_county?: string | null
+          other_language?: string | null
+          pets?: string | null
+          referral_source?: string | null
+          regional_center_name?: string | null
+          regional_center_worker?: boolean | null
+          signature_name?: string | null
+          signed_at?: string | null
+          signed_ip?: unknown
+          signed_statement_version?: string | null
+          signed_user_agent?: string | null
           submitted_at?: string | null
+          trustline_status?: string | null
           user_id?: string
+          why_special_needs?: string | null
+          willing_to_drive?: boolean | null
         }
         Relationships: []
       }
@@ -392,30 +600,30 @@ export type Database = {
       }
       contacts: {
         Row: {
-          address: string | null
           created_at: string
           email: string | null
           id: string
           label: string
           phone: string | null
+          preferred_contact_method: string
           user_id: string
         }
         Insert: {
-          address?: string | null
           created_at?: string
           email?: string | null
           id?: string
           label: string
           phone?: string | null
+          preferred_contact_method?: string
           user_id: string
         }
         Update: {
-          address?: string | null
           created_at?: string
           email?: string | null
           id?: string
           label?: string
           phone?: string | null
+          preferred_contact_method?: string
           user_id?: string
         }
         Relationships: []
@@ -552,6 +760,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_approve_caregiver: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       admin_caregiver_counts: {
         Args: never
         Returns: {
@@ -565,20 +777,53 @@ export type Database = {
       admin_caregiver_detail: {
         Args: { p_user_id: string }
         Returns: {
+          address_city: string
+          address_postal_code: string
+          address_street: string
           age_max: number
           age_min: number
+          approved_at: string
+          approved_by: string
           avatar_path: string
+          background_check_agreed: boolean
           bio: string
+          car_and_insurance: boolean
+          conditions: string[]
+          counties: string[]
           created_at: string
           date_of_birth: string
+          declined_at: string
+          declined_reason: string
+          difficult_moment: string
           display_name: string
+          earliest_start_date: string
           email: string
           gender: string
+          hourly_rate: number
+          interview_outcome: string
+          interviewed_at: string
+          languages: string[]
+          legal_name: string
+          max_travel_miles: number
           need_slugs: string[]
+          non_smoker: boolean
+          other_condition: string
+          other_county: string
+          other_language: string
+          pets: string
+          referral_source: string
+          regional_center_name: string
+          regional_center_worker: boolean
+          signature_name: string
+          signed_at: string
+          signed_statement_version: string
           submitted_at: string
           support_slugs: string[]
+          trustline_status: string
           user_id: string
           verification_status: string
+          why_special_needs: string
+          willing_to_drive: boolean
         }[]
       }
       admin_caregiver_directory: {
@@ -598,6 +843,23 @@ export type Database = {
           verification_status: string
         }[]
       }
+      admin_check_reference: {
+        Args: { p_outcome: string; p_reference_id: string }
+        Returns: undefined
+      }
+      admin_decline_caregiver: {
+        Args: { p_reason: string; p_user_id: string }
+        Returns: undefined
+      }
+      admin_set_application_record: {
+        Args: {
+          p_interview_outcome?: string
+          p_interviewed_at?: string
+          p_trustline_status?: string
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       ensure_household: { Args: never; Returns: string }
       my_caregiver_status: { Args: never; Returns: string }
       save_caregiver_capabilities: {
@@ -611,6 +873,8 @@ export type Database = {
         }
         Returns: undefined
       }
+      save_caregiver_experience: { Args: { p_rows?: Json }; Returns: undefined }
+      save_caregiver_references: { Args: { p_rows?: Json }; Returns: undefined }
       save_child: {
         Args: {
           p_child_id?: string
@@ -621,6 +885,10 @@ export type Database = {
           p_supports?: string[]
         }
         Returns: string
+      }
+      submit_caregiver_application: {
+        Args: { p_signature_name: string; p_statement_version: string }
+        Returns: undefined
       }
     }
     Enums: {

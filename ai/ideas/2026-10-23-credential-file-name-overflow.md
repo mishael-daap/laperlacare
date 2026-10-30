@@ -3,6 +3,9 @@
 **Found** 2026-10-23, testing feature 7.2 on a caregiver account. Not a design
 question — a layout bug.
 
+**Status** completed — fixed as part of [roadmap 7.2, Caregiver capabilities and
+credentials](../roadmap.md#72-caregiver-capabilities-and-credentials).
+
 ## What happens
 
 Adding a credential with a long file name pushes the name out of the dialog. The

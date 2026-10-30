@@ -182,3 +182,151 @@ async function notifyRejection(
     return "Decision saved, but the email could not be sent.";
   }
 }
+
+/**
+ * The profile decision, made once.
+ *
+ * This is the approvaI the paper form calls "Approved": it says this person may
+ * be listed, based on a cleared background check. It is not revisited when a CPR
+ * card later expires — each credential answers for itself after this point, and
+ * a lapsed one is a lapsed card, not a withdrawn approval.
+ *
+ * The background check is required by the database function rather than here, so
+ * the rule holds for any caller.
+ */
+export async function approveCaregiverAction(userId: string): Promise<ReviewState> {
+  const parsed = z.uuid({ error: "That caregiver id is not valid." }).safeParse(userId);
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message };
+  }
+
+  const supabase = await createClient();
+
+  if (!(await isAdmin(supabase))) {
+    return { error: "Not authorized." };
+  }
+
+  const { error } = await supabase.rpc("admin_approve_caregiver", {
+    p_user_id: parsed.data,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/admin/caregiver");
+  revalidatePath(`/admin/caregiver/${parsed.data}`);
+  revalidatePath("/me");
+  revalidatePath("/application");
+  return { ok: true };
+}
+
+/** The other decision. Only possible while the profile is undecided. */
+export async function declineCaregiverAction(
+  _previous: ReviewState,
+  formData: FormData,
+): Promise<ReviewState> {
+  const userId = formData.get("userId");
+  const reason = String(formData.get("reason") ?? "").trim();
+
+  if (typeof userId !== "string" || !userId) {
+    return { error: "That caregiver id is not valid." };
+  }
+
+  if (!reason) {
+    return { error: "Say why." };
+  }
+
+  const supabase = await createClient();
+
+  if (!(await isAdmin(supabase))) {
+    return { error: "Not authorized." };
+  }
+
+  const { error } = await supabase.rpc("admin_decline_caregiver", {
+    p_user_id: userId,
+    p_reason: reason,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/admin/caregiver");
+  revalidatePath(`/admin/caregiver/${userId}`);
+  return { ok: true };
+}
+
+/**
+ * The interview and the TrustLine answer — the two steps of the paper form's
+ * review panel that have no document and no derivation behind them.
+ *
+ * Everything else on that panel is read from a row: received from `submitted_at`,
+ * the two references from their own rows, the background check and the CPR proof
+ * from the credential decisions, published and the overall decision from
+ * `private.caregiver_status`.
+ */
+export async function saveApplicationRecordAction(
+  _previous: ReviewState,
+  formData: FormData,
+): Promise<ReviewState> {
+  const userId = formData.get("userId");
+  const interviewedAt = String(formData.get("interviewedAt") ?? "").trim();
+  const interviewOutcome = String(formData.get("interviewOutcome") ?? "").trim();
+  const trustlineStatus = String(formData.get("trustlineStatus") ?? "").trim();
+
+  if (typeof userId !== "string" || !userId) {
+    return { error: "That caregiver id is not valid." };
+  }
+
+  const supabase = await createClient();
+
+  if (!(await isAdmin(supabase))) {
+    return { error: "Not authorized." };
+  }
+
+  const { error } = await supabase.rpc("admin_set_application_record", {
+    p_user_id: userId,
+    p_interviewed_at: interviewedAt ? new Date(`${interviewedAt}T12:00:00Z`).toISOString() : undefined,
+    p_interview_outcome: interviewOutcome || undefined,
+    p_trustline_status: trustlineStatus || undefined,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath(`/admin/caregiver/${userId}`);
+  return { ok: true };
+}
+
+/** Records that a reference was spoken to, and what came of it. */
+export async function checkReferenceAction(
+  referenceId: string,
+  outcome: "ok" | "concern",
+): Promise<ReviewState> {
+  const parsed = z.uuid({ error: "That reference id is not valid." }).safeParse(referenceId);
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message };
+  }
+
+  const supabase = await createClient();
+
+  if (!(await isAdmin(supabase))) {
+    return { error: "Not authorized." };
+  }
+
+  const { error } = await supabase.rpc("admin_check_reference", {
+    p_reference_id: parsed.data,
+    p_outcome: outcome,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/admin/caregiver");
+  return { ok: true };
+}
