@@ -4,6 +4,7 @@ import { connection } from "next/server";
 
 import { CareSchedule } from "@/components/household/care-schedule";
 import { ChildList } from "@/components/household/child-list";
+import { FindCaregivers } from "@/components/household/find-caregivers";
 import { GenderPreference } from "@/components/household/gender-preference";
 import { isAdmin } from "@/lib/admin/is-admin";
 import { ensureHousehold } from "@/lib/auth/ensure-household";
@@ -75,6 +76,11 @@ export default async function HouseholdPage() {
         <CareSchedule windows={profile.availability} />
 
         <GenderPreference value={profile.household.preferred_caregiver_gender} />
+
+        <FindCaregivers
+          childCount={profile.children.length}
+          windowCount={profile.availability.length}
+        />
       </div>
     </main>
   );

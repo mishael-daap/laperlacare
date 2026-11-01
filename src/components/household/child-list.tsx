@@ -10,7 +10,7 @@ type ChildListProps = {
 
 export function ChildList({ childProfiles, needs, supports }: ChildListProps) {
   return (
-    <section className="flex flex-col gap-6">
+    <section id="children" className="flex scroll-mt-24 flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col gap-2">
           <h2 className="font-heading text-xl tracking-tight">

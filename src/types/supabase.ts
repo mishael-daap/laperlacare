@@ -326,6 +326,39 @@ export type Database = {
           },
         ]
       }
+      caregiver_shortlist: {
+        Row: {
+          caregiver_id: string
+          created_at: string
+          household_id: string
+        }
+        Insert: {
+          caregiver_id: string
+          created_at?: string
+          household_id: string
+        }
+        Update: {
+          caregiver_id?: string
+          created_at?: string
+          household_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "caregiver_shortlist_caregiver_id_fkey"
+            columns: ["caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "caregiver_shortlist_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       caregiver_supports: {
         Row: {
           caregiver_id: string
@@ -861,6 +894,37 @@ export type Database = {
         Returns: undefined
       }
       ensure_household: { Args: never; Returns: string }
+      match_caregivers: {
+        Args: {
+          p_gender?: string
+          p_hours?: string
+          p_max_rate?: number
+          p_partial?: boolean
+        }
+        Returns: {
+          age_max: number
+          age_min: number
+          avatar_path: string
+          bio: string
+          caregiver_id: string
+          counties: string[]
+          display_name: string
+          gaps: string[]
+          gender: string
+          hourly_rate: number
+          languages: string[]
+          missing_needs: string[]
+          missing_supports: string[]
+          needs_covered: number
+          needs_total: number
+          overlap_minutes: number
+          reasons: string[]
+          supports_covered: number
+          supports_total: number
+          tier: string
+          window_minutes: number
+        }[]
+      }
       my_caregiver_status: { Args: never; Returns: string }
       save_caregiver_capabilities: {
         Args: {

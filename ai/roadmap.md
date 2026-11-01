@@ -62,6 +62,10 @@ When the content is final, delete these comments. -->
 - **Status**: pending
 - **Goal**: A household subscribes for a flat monthly fee and the platform tracks whether it is active.
 
-## 9. Contact and interest requests
+## 9. Caregiver matching
+- **Status**: in development
+- **Goal**: A parent presses one button on their household and gets a ranked shortlist of approved caregivers — each one quoting the household's own facts back as the reason it matched, and naming the hours or needs it does not cover — with a few levers that relax the household's constraints instead of a search form that asks the parent to type what the household already knows.
+
+## 10. Contact and interest requests
 - **Status**: pending
 - **Goal**: Members reach caregiver contact details, and caregivers are notified and can accept or decline.
