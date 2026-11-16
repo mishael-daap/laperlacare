@@ -2,7 +2,7 @@
 
 | Role | Account |
 |---|---|
-| Admin | `da'apm5694@student.babcock.edu.ng` |
+| Admin | `victordaap27@gmail.com` |
 | Parent | `mishael60567@gmail.com` |
 | Caregiver | `themishaeldaap@gmail.com` |
 
@@ -107,7 +107,7 @@ family's matches.
 
 - **Window A** — the caregiver, signed out at the start.
 - **Window B** — the admin: `/admin/sign-in`,
-  `da'apm5694@student.babcock.edu.ng`.
+  `victordaap27@gmail.com`.
 
 Most of the caregiver's work is checked here on the admin side, so the steps are
 marked **A** or **B**.
