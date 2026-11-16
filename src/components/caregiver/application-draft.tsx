@@ -86,7 +86,8 @@ type Draft = {
   dirty: boolean;
   saving: boolean;
   error: string | null;
-  save: () => Promise<void>;
+  /** Writes every changed section. Resolves to null, or the message that stopped it. */
+  save: () => Promise<string | null>;
   cancel: () => void;
 };
 
@@ -274,7 +275,9 @@ export function ApplicationDraftProvider({
     setError(null);
   }, [baseline]);
 
-  const save = useCallback(async () => {
+  const save = useCallback(async (): Promise<string | null> => {
+    if (!dirty) return null;
+
     setSaving(true);
     setError(null);
 
@@ -350,7 +353,7 @@ export function ApplicationDraftProvider({
 
       if (failure) {
         setError(failure);
-        return;
+        return failure;
       }
 
       setBaseline({
@@ -368,10 +371,20 @@ export function ApplicationDraftProvider({
       });
 
       router.refresh();
+      return null;
+    } catch (cause) {
+      // A dropped connection is not a validation failure; say what happened
+      // rather than leaving the caller to guess whether anything was written.
+      const message =
+        cause instanceof Error ? cause.message : "Could not save your changes.";
+
+      setError(message);
+      return message;
     } finally {
       setSaving(false);
     }
   }, [
+    dirty,
     legalName,
     addressStreet,
     addressCity,

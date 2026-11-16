@@ -101,7 +101,7 @@ export function ApplicationSignature({
           <Input
             id="signature"
             autoComplete="name"
-            placeholder={legalName}
+            placeholder={draft.legalName}
             value={name}
             onChange={(event) => {
               setName(event.target.value);
@@ -110,7 +110,7 @@ export function ApplicationSignature({
           />
 
           <p className="text-sm text-muted-foreground">
-            Printed name: {legalName || "not set"} · Date: today
+            Printed name: {draft.legalName || "not set"} · Date: today
           </p>
         </div>
 
@@ -125,6 +125,17 @@ export function ApplicationSignature({
           disabled={pending || name.trim() === "" || !draft.backgroundCheckAgreed}
           onClick={() => {
             startTransition(async () => {
+              // The signature is checked against the database, and everything
+              // above it lives in a draft until the save bar is pressed. Save
+              // first, or a filled-in legal name greets the caregiver as "add
+              // your full legal name".
+              const saveError = await draft.save();
+
+              if (saveError) {
+                setError(saveError);
+                return;
+              }
+
               const result = await submitApplicationAction({ signatureName: name });
 
               if (result?.error) {
@@ -141,8 +152,8 @@ export function ApplicationSignature({
         </Button>
 
         <p className="text-sm text-muted-foreground">
-          Submitting locks your answers. You can still replace a credential at any
-          time.
+          Submitting saves your answers and locks them. You can still replace a
+          credential at any time.
         </p>
       </div>
     </section>
